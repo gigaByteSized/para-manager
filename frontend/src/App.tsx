@@ -6,7 +6,9 @@ import { TopBar } from './components/global/TopBar'
 import { ProSideBar } from './components/global/ProSideBar'
 import { Theme } from '@emotion/react'
 import { Dashboard } from './pages/dashboard'
-import Modeler from './pages/Modeler'
+import { RouteManager } from './pages/route-manager/'
+import Modeler from './pages/route-manager/Modeler'
+import { AgencyManager } from './pages/agency-manager'
 // import { Dashboard } from './pages/Dashboard'
 
 
@@ -27,7 +29,8 @@ const App = () => {
             <TopBar />
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/route-modeler" element={<Modeler />} />
+              <Route path="/agency/*" element={<AgencyManager />} />
+              <Route path="/routes/*" element={<RouteManager />} />
               {/* <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

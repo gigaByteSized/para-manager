@@ -4,10 +4,16 @@ import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar"
 import { Box, Icon, IconButton, Typography, useTheme } from "@mui/material"
 // import DashboardIcon from "@mui/icons-material/Dashboard"
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined"
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined"
+import HailOutlinedIcon from '@mui/icons-material/HailOutlined';
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined"
+import CommuteOutlinedIcon from '@mui/icons-material/CommuteOutlined';
+import DepartureBoardOutlinedIcon from '@mui/icons-material/DepartureBoardOutlined';
+import PersonIcon from "@mui/icons-material/Person"
 import { ListItemText } from "@mui/material"
 import { tokens } from "../../theme"
-import PersonIcon from "@mui/icons-material/Person"
-
+import { Hail } from "@mui/icons-material"
 
 // TODO : ICONS TO FOLLOW
 
@@ -22,9 +28,9 @@ const Item = ({ title, to, icon, selected, setSelected }: any) => {
       }}
       onClick={() => setSelected(title)}
       icon={icon}
+      component={<Link to={to} />}
     >
       <Typography>{title}</Typography>
-      <Link to={to} />
     </MenuItem>
   )
 }
@@ -54,12 +60,21 @@ export const ProSideBar = () => {
         "& .ps-active": {
           color: "#6870fa !important",
         },
+        // "& ::-webkit-scrollbar-track": {
+        //   background: "#e0e0e0",
+        // },
+        // "& ::-webkit-scrollbar-thumb": {
+        //   background: "#888",
+        // },
+        // "& ::-webkit-scrollbar-track::hover": {
+        //   background: "#555",
+        // },
       }}
     >
       <Sidebar
         collapsed={isCollapsed}
         backgroundColor={colors.primary[400]}
-        rootStyles={{ border: "none" }}
+        rootStyles={{ border: "none", height: "100vh", }}
       >
         <Menu>
           {/* LOGO AND MENU ICON */}
@@ -95,7 +110,7 @@ export const ProSideBar = () => {
             <Box mb="25px">
               {/* TODO: DON'T FORGET TO SET FALLBACK IMG */}
               <Box display="flex" justifyContent="center" alignItems="center">
-                <PersonIcon sx={{fontSize: "50px"}}/>
+                <PersonIcon sx={{ fontSize: "50px" }} /> {/* TEMPORARY */}
                 {/* <img
                   alt="profile-user"
                   width="100px"
@@ -127,7 +142,7 @@ export const ProSideBar = () => {
             <Item
               title="Dashboard"
               to="/"
-              icon={<MenuOutlinedIcon />}
+              icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -137,31 +152,80 @@ export const ProSideBar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              GTFS
             </Typography>
             <Item
-              title="Manage Team"
-              to="/team"
-              icon={<MenuOutlinedIcon />}
+              title="Agencies"
+              to="/agency"
+              icon={<GroupsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Contacts Information"
-              to="/contacts"
-              icon={<MenuOutlinedIcon />}
+              title="Stops"
+              to="/stops"
+              icon={<HailOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Invoices Balances"
-              to="/invoices"
-              icon={<MenuOutlinedIcon />}
+              title="Routes"
+              to="/routes"
+              icon={<MapOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Trips"
+              to="/trips"
+              icon={<CommuteOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Stop Times"
+              to="/stop-times"
+              icon={<DepartureBoardOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
 
-            <Typography
+            {/* <Typography
               variant="h6"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
@@ -224,7 +288,7 @@ export const ProSideBar = () => {
               icon={<MenuOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
           </Box>
         </Menu>
       </Sidebar>

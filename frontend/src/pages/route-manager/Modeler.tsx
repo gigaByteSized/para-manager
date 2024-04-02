@@ -5,7 +5,7 @@ import Step from "@mui/material/Step"
 import StepLabel from "@mui/material/StepLabel"
 import Button from "@mui/material/Button"
 import Typography from "@mui/material/Typography"
-import { LeafletMap } from "../components/LeafletMap"
+import { LeafletMap } from "../../components/LeafletMap"
 
 const steps = ["Select campaign settings", "Create an ad group", "Create an ad"]
 

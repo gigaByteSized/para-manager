@@ -1,7 +1,7 @@
 import { Box, Button, Grid, useTheme } from "@mui/material"
-import DomainAddOutlinedIcon from "@mui/icons-material/DomainAddOutlined"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
+import EditCalendarIcon from "@mui/icons-material/EditCalendar"
 
 import {
   DataGrid,
@@ -18,6 +18,7 @@ import { tokens } from "../../theme"
 import { useEffect, useState } from "react"
 import { AddModal } from "./modals/AddModal"
 import { EditModal } from "./modals/EditModal"
+import { Check } from "@mui/icons-material"
 
 const QuickSearchToolbar = (props) => {
   const theme = useTheme()
@@ -38,7 +39,7 @@ const QuickSearchToolbar = (props) => {
       <Button
         variant="contained"
         onClick={handleOpenAdd}
-        endIcon={<DomainAddOutlinedIcon />}
+        endIcon={<EditCalendarIcon />}
         sx={{
           backgroundColor: colors.greenAccent[600],
           color: colors.grey[100],
@@ -47,7 +48,7 @@ const QuickSearchToolbar = (props) => {
           },
         }}
       >
-        Add Agency
+        Add Service Schedule
       </Button>
       <AddModal
         open={openAdd}
@@ -60,7 +61,7 @@ const QuickSearchToolbar = (props) => {
   )
 }
 
-export const AgencyGrid = () => {
+export const CalendarGrid = () => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
   const [rows, setRows] = useState([])
@@ -74,61 +75,127 @@ export const AgencyGrid = () => {
     page: 0,
   })
 
-  const agencyColRef = collection(db, "agency")
+  const calendarColRef = collection(db, "calendar")
 
   useEffect(() => {
     fetchAgencies()
   }, [])
 
   const fetchAgencies = async () => {
-    const data = await getDocs(agencyColRef)
+    const data = await getDocs(calendarColRef)
     setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
   }
 
   const apiRef = useGridApiRef()
 
   const columns: GridColDef[] = [
-    { field: "agency_id", headerName: "Agency ID", flex: 0.75 },
+    { field: "service_id", headerName: "Service ID", flex: 3 },
     {
-      field: "agency_name",
-      headerName: "Agency Name",
-      flex: 3,
-    },
-    {
-      field: "agency_url",
-      headerName: "Agency URL",
+      field: "monday",
+      headerName: "Monday",
+      align: "center",
+      headerAlign: "center",
       flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.monday === 1 ? <Check /> : null}</>
+      },
     },
     {
-      field: "agency_timezone",
-      headerName: "Timezone",
-      flex: 1,
+      field: "tuesday",
+      headerName: "Tuesday",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.tuesday === 1 ? <Check /> : null}</>
+      },
+    },
+    {
+      field: "wednesday",
+      headerName: "Wednesday",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.wednesday === 1 ? <Check /> : null}</>
+      },
       // width: 90,
     },
     {
-      field: "agency_lang",
-      headerName: "Language",
+      field: "thursday",
+      headerName: "Thursday",
+      align: "center",
+      headerAlign: "center",
       // width: 70,
-      flex: 0.75,
-    },
-    {
-      field: "agency_phone",
-      headerName: "Contact Number",
-      // width: 110,
-      flex: 1,
-      type: "number",
-    },
-    {
-      field: "agency_fare_url",
-      headerName: "Fare URL",
+
       flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.thursday === 1 ? <Check /> : null}</>
+      },
     },
     {
-      field: "agency_email",
-      headerName: "Email",
-      type: "email",
-      flex: 1.5,
+      field: "friday",
+      headerName: "Friday",
+      align: "center",
+      headerAlign: "center",
+      // width: 110,
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.friday === 1 ? <Check /> : null}</>
+      },
+    },
+    {
+      field: "saturday",
+      headerName: "Saturday",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.saturday === 1 ? <Check /> : null}</>
+      },
+    },
+    {
+      field: "sunday",
+      headerName: "Sunday",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return <>{params.row.sunday === 1 ? <Check /> : null}</>
+      },
       // width: 130,
+    },
+    {
+      field: "start_date",
+      headerName: "Start Date",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: "end_date",
+      headerName: "End Date",
+      align: "center",
+      headerAlign: "center",
+      flex: 2,
+      sortable: false,
+      disableColumnMenu: true,
     },
     {
       field: "action",
@@ -136,7 +203,8 @@ export const AgencyGrid = () => {
       align: "center",
       headerAlign: "center",
       sortable: false,
-      flex: 1,
+      flex: 1.5,
+
       disableColumnMenu: true,
       renderCell: (params) => {
         return (
@@ -157,7 +225,7 @@ export const AgencyGrid = () => {
                     cursor: "pointer",
                   },
                 }}
-                onClick={() => editAgency(params.id, params.row)}
+                onClick={() => editService(params.id, params.row)}
               />
             </Grid>
             <Grid
@@ -177,7 +245,7 @@ export const AgencyGrid = () => {
                   },
                 }}
                 onClick={() => {
-                  deleteAgency(params.row.id)
+                  deleteService(params.row.id)
                 }}
               />
             </Grid>
@@ -187,9 +255,9 @@ export const AgencyGrid = () => {
     },
   ]
 
-  const editAgency = (id: any, initialValues: any) => {
+  const editService = (id: any, initialValues: any) => {
     rows.forEach((e) => {
-      if (e.agency_id === id) {
+      if (e.service_id === id) {
         initialValues.id = e.id
         {
           return
@@ -200,7 +268,7 @@ export const AgencyGrid = () => {
     handleOpenEdit()
   }
 
-  const deleteAgency = (id: any) => {
+  const deleteService = (id: any) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -219,12 +287,12 @@ export const AgencyGrid = () => {
   }
 
   const deleteApi = async (id: string) => {
-    const docRef = doc(db, "agency", id)
+    const docRef = doc(db, "calendar", id)
     const docSnap = await getDoc(docRef)
     if (!docSnap.exists()) {
       Swal.fire({
         title: "Error",
-        text: "Agency not found",
+        text: "Service not found",
         icon: "error",
         background: theme.palette.background.default,
         color: colors.grey[100],
@@ -235,9 +303,7 @@ export const AgencyGrid = () => {
     await deleteDoc(docRef)
     Swal.fire({
       title: "Deleted!",
-      text: `Agency ID ${docSnap.data().agency_id}, "${
-        docSnap.data().agency_name
-      }" has been deleted.`,
+      text: `Service ID ${docSnap.data().service_id}, has been deleted.`,
       icon: "success",
       background: theme.palette.background.default,
       color: colors.grey[100],
@@ -279,7 +345,7 @@ export const AgencyGrid = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.agency_id}
+        getRowId={(row) => row.service_id}
         apiRef={apiRef}
         slots={{
           toolbar: (props) => (

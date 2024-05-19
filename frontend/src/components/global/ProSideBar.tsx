@@ -11,9 +11,10 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined"
 import CommuteOutlinedIcon from '@mui/icons-material/CommuteOutlined';
 import DepartureBoardOutlinedIcon from '@mui/icons-material/DepartureBoardOutlined';
 import PersonIcon from "@mui/icons-material/Person"
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { ListItemText } from "@mui/material"
 import { tokens } from "../../theme"
-import { Hail } from "@mui/icons-material"
+import ShapeLineOutlinedIcon from "@mui/icons-material/ShapeLineOutlined"
 
 // TODO : ICONS TO FOLLOW
 
@@ -190,6 +191,20 @@ export const ProSideBar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Service Calendars"
+              to="/calendar"
+              icon={<CalendarMonthIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Shapes"
+              to="/shapes"
+              icon={<ShapeLineOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            {/* <Item
               title="Stop Times"
               to="/stop-times"
               icon={<DepartureBoardOutlinedIcon />}
@@ -216,14 +231,7 @@ export const ProSideBar = () => {
               icon={<DepartureBoardOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <Item
-              title="Stop Times"
-              to="/stop-times"
-              icon={<DepartureBoardOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            /> */}
 
             {/* <Typography
               variant="h6"

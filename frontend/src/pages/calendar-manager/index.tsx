@@ -1,10 +1,9 @@
 import { Box } from "@mui/material"
 import { Header } from "../../components/Header"
-import Modeler from "./Modeler"
 import { Route, Routes } from "react-router-dom"
-import { RouteGrid } from "./RouteGrid"
+import { CalendarGrid } from "./CalendarGrid"
 
-export const RouteManager = () => {
+export const CalendarManager = () => {
   return (
     <Box m={"20px"}>
       <Box
@@ -12,11 +11,10 @@ export const RouteManager = () => {
         justifyContent={"space-between"}
         alignItems={"center"}
       >
-        <Header title="Routes" subtitle="Welcome to routes" />
+        <Header title="Service Calendars" subtitle="Welcome to service calendars" />
       </Box>
       <Routes>
-              <Route path="/" element={<RouteGrid />} />
-              <Route path="/modeler" element={<Modeler />} />
+              <Route path="/" element={<CalendarGrid />} />
               {/* <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

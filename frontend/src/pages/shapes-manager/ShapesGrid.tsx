@@ -1,5 +1,6 @@
-import { Box, Button, Grid, useTheme } from "@mui/material"
-import DomainAddOutlinedIcon from "@mui/icons-material/DomainAddOutlined"
+import { Box, Button, Grid, Tooltip, useTheme } from "@mui/material"
+import TransitEnterexitIcon from "@mui/icons-material/TransitEnterexit"
+import PreviewIcon from "@mui/icons-material/Preview"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 
@@ -26,6 +27,10 @@ const QuickSearchToolbar = (props) => {
   const handleOpenAdd = () => setOpenAdd(true)
   const handleCloseAdd = () => setOpenAdd(false)
 
+  // const viewInNewWindow = () => {
+  //   window.open("/stops/viewer", "_blank", "popup")
+  // }
+
   return (
     <Box
       sx={{
@@ -35,32 +40,50 @@ const QuickSearchToolbar = (props) => {
         justifyContent: "space-between",
       }}
     >
-      <Button
-        variant="contained"
-        onClick={handleOpenAdd}
-        endIcon={<DomainAddOutlinedIcon />}
-        sx={{
-          backgroundColor: colors.greenAccent[600],
-          color: colors.grey[100],
-          "&:hover": {
-            backgroundColor: colors.greenAccent[800],
-          },
-        }}
-      >
-        Add Agency
-      </Button>
-      <AddModal
-        open={openAdd}
-        close={handleCloseAdd}
-        callback={props.fetchCallback}
-      />
-
+      <Box sx={{}}>
+        <Button
+          variant="contained"
+          onClick={handleOpenAdd}
+          endIcon={<TransitEnterexitIcon />}
+          sx={{
+            backgroundColor: colors.greenAccent[600],
+            color: colors.grey[100],
+            "&:hover": {
+              backgroundColor: colors.greenAccent[800],
+            },
+          }}
+        >
+          Add Trip Shape
+        </Button>
+        <AddModal
+          open={openAdd}
+          close={handleCloseAdd}
+          callback={props.fetchCallback}
+        />
+        {/* <Button
+          variant="contained"
+          endIcon={<PreviewIcon />}
+          // href="/stops/viewer"
+          onClick={viewInNewWindow}
+          // onClick={}
+          sx={{
+            ml: 1,
+            backgroundColor: colors.greenAccent[600],
+            color: colors.grey[100],
+            "&:hover": {
+              backgroundColor: colors.greenAccent[800],
+            },
+          }}
+        >
+          View All Stops
+        </Button> */}
+      </Box>
       <GridToolbarQuickFilter />
     </Box>
   )
 }
 
-export const AgencyGrid = () => {
+export const ShapesGrid = () => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
   const [rows, setRows] = useState([])
@@ -74,61 +97,103 @@ export const AgencyGrid = () => {
     page: 0,
   })
 
-  const agencyColRef = collection(db, "agency")
+  const shapesColRef = collection(db, "shapes")
 
   useEffect(() => {
-    fetchAgencies()
+    // fetchShapes()
   }, [])
 
-  const fetchAgencies = async () => {
-    const data = await getDocs(agencyColRef)
+  const fetchShapes = async () => {
+    const data = await getDocs(shapesColRef)
     setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
+    // return 1
+    // setViewRows(rows)
   }
 
   const apiRef = useGridApiRef()
 
   const columns: GridColDef[] = [
-    { field: "agency_id", headerName: "Agency ID", flex: 0.75 },
+    { field: "stop_id", headerName: "Stop ID", flex: 1 },
     {
-      field: "agency_name",
-      headerName: "Agency Name",
-      flex: 3,
+      field: "stop_name",
+      headerName: "Stop Name",
+      flex: 4,
     },
     {
-      field: "agency_url",
-      headerName: "Agency URL",
+      field: "stop_lat",
+      headerName: "Latitude",
       flex: 2,
     },
     {
-      field: "agency_timezone",
-      headerName: "Timezone",
-      flex: 1,
-      // width: 90,
-    },
-    {
-      field: "agency_lang",
-      headerName: "Language",
-      // width: 70,
-      flex: 0.75,
-    },
-    {
-      field: "agency_phone",
-      headerName: "Contact Number",
-      // width: 110,
-      flex: 1,
-      type: "number",
-    },
-    {
-      field: "agency_fare_url",
-      headerName: "Fare URL",
+      field: "stop_lon",
+      headerName: "Longitude",
       flex: 2,
     },
     {
-      field: "agency_email",
-      headerName: "Email",
-      type: "email",
-      flex: 1.5,
-      // width: 130,
+      field: "stop_desc",
+      headerName: "Description",
+      sortable: false,
+      align: "center",
+      headerAlign: "center",
+      // width: 160,
+      flex: 1.25,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {params.row.stop_desc === "" ? (
+              <>
+                <Tooltip title="Stop has no description" arrow>
+                  <span>
+                    <Button
+                      disabled={params.row.stop_desc === ""}
+                      onClick={() => showStopDesc(params.row)}
+                      sx={{
+                        backgroundColor:
+                          params.row.stop_desc != ""
+                            ? colors.greenAccent[600]
+                            : colors.grey[500],
+                        color: colors.grey[100],
+                        "&:hover": {
+                          backgroundColor: colors.greenAccent[700],
+                        },
+                      }}
+                    >
+                      View
+                    </Button>
+                  </span>
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <Button
+                  disabled={params.row.stop_desc === ""}
+                  onClick={() => showStopDesc(params.row)}
+                  sx={{
+                    backgroundColor:
+                      params.row.stop_desc != ""
+                        ? colors.greenAccent[600]
+                        : colors.grey[500],
+                    color: colors.grey[100],
+                    "&:hover": {
+                      backgroundColor: colors.greenAccent[700],
+                    },
+                  }}
+                >
+                  View
+                </Button>
+              </>
+            )}
+          </Box>
+        )
+      },
     },
     {
       field: "action",
@@ -157,7 +222,13 @@ export const AgencyGrid = () => {
                     cursor: "pointer",
                   },
                 }}
-                onClick={() => editAgency(params.id, params.row)}
+                onClick={() => editStop(params.id, params.row)}
+              />
+              <EditModal
+                open={openEdit}
+                close={handleCloseEdit}
+                callback={fetchShapes}
+                initialValues={editContext}
               />
             </Grid>
             <Grid
@@ -177,7 +248,7 @@ export const AgencyGrid = () => {
                   },
                 }}
                 onClick={() => {
-                  deleteAgency(params.row.id)
+                  deleteStop(params.row.id)
                 }}
               />
             </Grid>
@@ -187,10 +258,11 @@ export const AgencyGrid = () => {
     },
   ]
 
-  const editAgency = (id: any, initialValues: any) => {
+  const editStop = (id: any, initialValues: any) => {
     rows.forEach((e) => {
-      if (e.agency_id === id) {
+      if (e.stop_id === id) {
         initialValues.id = e.id
+        initialValues.agency_id = "LTFRB"
         {
           return
         }
@@ -200,7 +272,7 @@ export const AgencyGrid = () => {
     handleOpenEdit()
   }
 
-  const deleteAgency = (id: any) => {
+  const deleteStop = (id: any) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -219,12 +291,12 @@ export const AgencyGrid = () => {
   }
 
   const deleteApi = async (id: string) => {
-    const docRef = doc(db, "agency", id)
+    const docRef = doc(db, "stops", id)
     const docSnap = await getDoc(docRef)
     if (!docSnap.exists()) {
       Swal.fire({
         title: "Error",
-        text: "Agency not found",
+        text: "Stop not found",
         icon: "error",
         background: theme.palette.background.default,
         color: colors.grey[100],
@@ -235,15 +307,29 @@ export const AgencyGrid = () => {
     await deleteDoc(docRef)
     Swal.fire({
       title: "Deleted!",
-      text: `Agency ID ${docSnap.data().agency_id}, "${
-        docSnap.data().agency_name
+      text: `Stop ID ${docSnap.data().stop_id}, "${
+        docSnap.data().stop_name
       }" has been deleted.`,
       icon: "success",
       background: theme.palette.background.default,
       color: colors.grey[100],
       timer: 1500,
     })
-    fetchAgencies()
+    fetchShapes()
+  }
+
+  const showStopDesc = (params) => {
+    Swal.fire({
+      title: `Stop ID ${params.stop_id}`,
+      text:
+        params.stop_desc === "" || params.stop_desc === undefined
+          ? "No description"
+          : params.stop_desc,
+      icon: "info",
+      confirmButtonColor: colors.greenAccent[600],
+      background: theme.palette.background.default,
+      color: colors.grey[100],
+    })
   }
 
   return (
@@ -279,11 +365,11 @@ export const AgencyGrid = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.agency_id}
+        getRowId={(row) => row.stop_id}
         apiRef={apiRef}
         slots={{
           toolbar: (props) => (
-            <QuickSearchToolbar {...props} fetchCallback={fetchAgencies} />
+            <QuickSearchToolbar {...props} fetchCallback={fetchShapes} />
           ),
         }}
         disableRowSelectionOnClick
@@ -298,12 +384,6 @@ export const AgencyGrid = () => {
             outline: "none",
           },
         }}
-      />
-      <EditModal
-        open={openEdit}
-        close={handleCloseEdit}
-        callback={fetchAgencies}
-        initialValues={editContext}
       />
     </Box>
   )

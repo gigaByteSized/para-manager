@@ -172,8 +172,16 @@ export const stopSchema = yup.lazy((values) => {
   if (!stop_name || !stop_lat || !stop_lon) {
     return yup.object().shape({
       stop_name: yup.string().required("Stop name is required"),
-      stop_lat: yup.string().required("Stop latitude is required, click on the map to set the latitude"),
-      stop_lon: yup.string().required("Stop longitude is required, click on the map to set the longitude"),
+      stop_lat: yup
+        .string()
+        .required(
+          "Stop latitude is required, click on the map to set the latitude"
+        ),
+      stop_lon: yup
+        .string()
+        .required(
+          "Stop longitude is required, click on the map to set the longitude"
+        ),
     })
   }
 
@@ -221,7 +229,7 @@ export const calendarSchema = yup.lazy((values) => {
 
 // trip schema combines trips and frequencies
 export const tripSchema = yup.lazy((values) => {
-  const { route_id, service_id, trip_id, start_time, end_time  } = values
+  const { route_id, service_id, trip_id, start_time, end_time } = values
   if (!route_id || !service_id || !trip_id || !start_time || !end_time) {
     return yup.object().shape({
       route_id: yup.string().required("Route ID is required"),
@@ -231,6 +239,95 @@ export const tripSchema = yup.lazy((values) => {
       end_time: yup.string().required("End time is required"),
     })
   }
+  return yup.mixed().notRequired()
+})
+
+export const fareSchema = yup.lazy((values) => {
+  const {
+    route_type,
+    base_fare_regular,
+    succeeding_regular,
+    base_fare_discounted,
+    succeeding_discounted,
+  } = values
+  console.log(values)
+
+  if (
+    !route_type ||
+    !base_fare_regular ||
+    !succeeding_regular ||
+    !base_fare_discounted ||
+    !succeeding_discounted
+  ) {
+    return yup.object().shape({
+      route_type: yup.string().required("Route type is required"),
+      base_fare_regular: yup
+        .number()
+        .required("Base fare for regular is required"),
+      succeeding_regular: yup
+        .number()
+        .required("Succeeding fare for regular is required"),
+      base_fare_discounted: yup
+        .number()
+        .required("Base fare for discounted is required"),
+      succeeding_discounted: yup
+        .number()
+        .required("Succeeding fare for discounted is required"),
+    })
+  }
+
+  // Check if numbers are negative
+  if (
+    base_fare_regular < 0 ||
+    succeeding_regular < 0 ||
+    base_fare_discounted < 0 ||
+    succeeding_discounted < 0
+  ) {
+    return yup.object().shape({
+      base_fare_regular: yup
+        .number()
+        .min(0, "Base fare for regular cannot be negative"),
+      succeeding_regular: yup
+        .number()
+        .min(0, "Succeeding fare for regular cannot be negative"),
+      base_fare_discounted: yup
+        .number()
+        .min(0, "Base fare for discounted cannot be negative"),
+      succeeding_discounted: yup
+        .number()
+        .min(0, "Succeeding fare for discounted cannot be negative"),
+    })
+  }
+
+
+
+  if (!route_type) {
+    return yup.object().shape({
+      route_type: yup.string().required("Route type is required"),
+    })
+  }
+
+  if (!base_fare_regular || !succeeding_regular) {
+    return yup.object().shape({
+      base_fare_regular: yup
+        .number()
+        .required("Base fare for regular is required"),
+      succeeding_regular: yup
+        .number()
+        .required("Succeeding fare for regular is required"),
+    })
+  }
+  if (!base_fare_discounted || !succeeding_discounted) {
+    return yup.object().shape({
+      base_fare_discounted: yup
+        .number()
+        .required("Base fare for discounted is required"),
+      succeeding_discounted: yup
+        .number()
+        .required("Succeeding fare for discounted is required"),
+    })
+  }
+
   return yup.mixed().notRequired()
 })
 

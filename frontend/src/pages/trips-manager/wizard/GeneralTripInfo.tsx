@@ -62,7 +62,7 @@ export const GeneralTripInfo = (props) => {
     const routeNames = routeRows.map((row) => {
       return {
         id: row.route_id,
-        name: row.route_long_name ? row.route_long_name : row.route_short_name,
+        name: row.route_short_name ? row.route_short_name : row.route_long_name,
       }
     })
     setRoutes(routeNames)
@@ -121,7 +121,8 @@ export const GeneralTripInfo = (props) => {
               onChange={(e, newValue) => {
                 props.setRouteValue(newValue)
                 routeRows.map((row) => {
-                  if (row.route_long_name ? row.route_long_name === newValue : row.route_short_name === newValue) {
+                  var parseVal = newValue.split("] ")[1]
+                  if (row.route_short_name ? row.route_short_name === parseVal : row.route_long_name === parseVal) {
                     console.log(row.route_id)
                     setRouteID(
                       row.route_id
@@ -135,7 +136,7 @@ export const GeneralTripInfo = (props) => {
               onInputChange={(e, newInputValue) => {
                 setRouteInputValue(newInputValue)
               }}
-              options={routes.map((option) => `${option.name}`).sort()}
+              options={routes.map((option) => `[${option.id}] ${option.name}`).sort()}
               renderInput={(params) => (
                 <CustomTextField
                   {...params}

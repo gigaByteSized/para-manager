@@ -64,7 +64,7 @@ export const ReviewTrip = (props) => {
     setRoutes(orsRes.routes)
     setSegments(orsRes.routes[0].segments)
     setEncodedPolyline(orsRes.routes[0].geometry)
-    props.setShapePts(polyUtil.decode(orsRes.routes[0].geometry))
+    // props.setShapePts(polyUtil.decode(orsRes.routes[0].geometry))
   }, [orsRes, routes, segments, encodedPolyline])
 
   return (

@@ -1,10 +1,10 @@
 import { Box } from "@mui/material"
 import { Header } from "../../components/Header"
 import { Route, Routes } from "react-router-dom"
-import { ShapesGrid } from "./ShapesGrid"
+import { FaresGrid } from "./FaresGrid"
 
 
-export const ShapesManager = () => {
+export const FaresManager = () => {
   return (
     <Box m={"20px"}>
       <Box
@@ -15,7 +15,7 @@ export const ShapesManager = () => {
         <Header title="Shapes" subtitle="Welcome to shapes" />
       </Box>
       <Routes>
-              <Route path="/" element={<ShapesGrid />} />
+              <Route path="/" element={<FaresGrid />} />
               {/* <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

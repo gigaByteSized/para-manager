@@ -13,7 +13,7 @@ import { StopsManager } from "./pages/stops-manager"
 import { StopsViewer } from "./pages/stops-manager/StopsViewer"
 import { CalendarManager } from "./pages/calendar-manager"
 import { TripsManager } from "./pages/trips-manager"
-import { ShapesManager } from "./pages/shapes-manager"
+import { FaresManager } from "./pages/fares-manager"
 // import { Dashboard } from './pages/Dashboard'
 
 const App = () => {
@@ -40,7 +40,7 @@ const App = () => {
                 <Route path="/stops/*" element={<StopsManager />} />
                 <Route path="/calendar/*" element={<CalendarManager />} />
                 <Route path="/trips/*" element={<TripsManager />} />
-                <Route path="/shapes/*" element={<ShapesManager />} />
+                <Route path="/fares/*" element={<FaresManager />} />
                 {/* <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/form" element={<Form />} />

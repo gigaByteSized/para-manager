@@ -70,8 +70,9 @@ export const StopsViewer = (props) => {
         id="map"
         // callback={setFieldValue}
         // showDraggableMarker
-        showMarkers
-        markers={markers}
+        // showMarkers
+        showPolyline
+        // markers={markers}
         iconSize={[20, 20]}
         zoom={18}
         height={"100%"}

@@ -1,6 +1,5 @@
-import { Box, Button, Grid, Tooltip, useTheme } from "@mui/material"
+import { Box, Button, Grid, useTheme } from "@mui/material"
 import TransitEnterexitIcon from "@mui/icons-material/TransitEnterexit"
-import PreviewIcon from "@mui/icons-material/Preview"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 
@@ -53,7 +52,7 @@ const QuickSearchToolbar = (props) => {
             },
           }}
         >
-          Add Trip Shape
+          Add Fare
         </Button>
         <AddModal
           open={openAdd}
@@ -83,7 +82,7 @@ const QuickSearchToolbar = (props) => {
   )
 }
 
-export const ShapesGrid = () => {
+export const FaresGrid = () => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
   const [rows, setRows] = useState([])
@@ -97,103 +96,50 @@ export const ShapesGrid = () => {
     page: 0,
   })
 
-  const shapesColRef = collection(db, "shapes")
+  const faresColRef = collection(db, "_meta-fares-per-type-and-class")
 
   useEffect(() => {
-    // fetchShapes()
+    fetchFares()
   }, [])
 
-  const fetchShapes = async () => {
-    const data = await getDocs(shapesColRef)
+  const fetchFares = async () => {
+    const data = await getDocs(faresColRef)
     setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
-    // return 1
-    // setViewRows(rows)
   }
 
   const apiRef = useGridApiRef()
 
   const columns: GridColDef[] = [
-    { field: "stop_id", headerName: "Stop ID", flex: 1 },
+    { field: "route_type", headerName: "Transit mode", flex: 3 },
     {
-      field: "stop_name",
-      headerName: "Stop Name",
-      flex: 4,
-    },
-    {
-      field: "stop_lat",
-      headerName: "Latitude",
+      field: "minimum_distance",
+      headerName: "Minimum distance (km)",
       flex: 2,
+      type: "number",
     },
     {
-      field: "stop_lon",
-      headerName: "Longitude",
+      field: "base_fare_regular",
+      headerName: "Base fare (Regular)",
       flex: 2,
+      type: "number",
     },
     {
-      field: "stop_desc",
-      headerName: "Description",
-      sortable: false,
-      align: "center",
-      headerAlign: "center",
-      // width: 160,
-      flex: 1.25,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {params.row.stop_desc === "" ? (
-              <>
-                <Tooltip title="Stop has no description" arrow>
-                  <span>
-                    <Button
-                      disabled={params.row.stop_desc === ""}
-                      onClick={() => showStopDesc(params.row)}
-                      sx={{
-                        backgroundColor:
-                          params.row.stop_desc != ""
-                            ? colors.greenAccent[600]
-                            : colors.grey[500],
-                        color: colors.grey[100],
-                        "&:hover": {
-                          backgroundColor: colors.greenAccent[700],
-                        },
-                      }}
-                    >
-                      View
-                    </Button>
-                  </span>
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                <Button
-                  disabled={params.row.stop_desc === ""}
-                  onClick={() => showStopDesc(params.row)}
-                  sx={{
-                    backgroundColor:
-                      params.row.stop_desc != ""
-                        ? colors.greenAccent[600]
-                        : colors.grey[500],
-                    color: colors.grey[100],
-                    "&:hover": {
-                      backgroundColor: colors.greenAccent[700],
-                    },
-                  }}
-                >
-                  View
-                </Button>
-              </>
-            )}
-          </Box>
-        )
-      },
+      field: "succeeding_regular",
+      headerName: "Increment per succeding km (Regular)",
+      flex: 2,
+      type: "number",
+    },
+    {
+      field: "base_fare_discounted",
+      headerName: "Base fare (Discounted)",
+      flex: 2,
+      type: "number",
+    },
+    {
+      field: "succeeding_discounted",
+      headerName: "Increment per succeding km (Discounted)",
+      flex: 2,
+      type: "number",
     },
     {
       field: "action",
@@ -222,13 +168,7 @@ export const ShapesGrid = () => {
                     cursor: "pointer",
                   },
                 }}
-                onClick={() => editStop(params.id, params.row)}
-              />
-              <EditModal
-                open={openEdit}
-                close={handleCloseEdit}
-                callback={fetchShapes}
-                initialValues={editContext}
+                onClick={() => editFare(params.id, params.row)}
               />
             </Grid>
             <Grid
@@ -248,7 +188,7 @@ export const ShapesGrid = () => {
                   },
                 }}
                 onClick={() => {
-                  deleteStop(params.row.id)
+                  deleteFare(params.row.id)
                 }}
               />
             </Grid>
@@ -258,11 +198,11 @@ export const ShapesGrid = () => {
     },
   ]
 
-  const editStop = (id: any, initialValues: any) => {
+  const editFare = (id: any, initialValues: any) => {
     rows.forEach((e) => {
       if (e.stop_id === id) {
         initialValues.id = e.id
-        initialValues.agency_id = "LTFRB"
+        // initialValues.agency_id = "LTFRB"
         {
           return
         }
@@ -272,7 +212,7 @@ export const ShapesGrid = () => {
     handleOpenEdit()
   }
 
-  const deleteStop = (id: any) => {
+  const deleteFare = (id: any) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -315,21 +255,7 @@ export const ShapesGrid = () => {
       color: colors.grey[100],
       timer: 1500,
     })
-    fetchShapes()
-  }
-
-  const showStopDesc = (params) => {
-    Swal.fire({
-      title: `Stop ID ${params.stop_id}`,
-      text:
-        params.stop_desc === "" || params.stop_desc === undefined
-          ? "No description"
-          : params.stop_desc,
-      icon: "info",
-      confirmButtonColor: colors.greenAccent[600],
-      background: theme.palette.background.default,
-      color: colors.grey[100],
-    })
+    fetchFares()
   }
 
   return (
@@ -365,11 +291,11 @@ export const ShapesGrid = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.stop_id}
+        getRowId={(row) => row.route_type}
         apiRef={apiRef}
         slots={{
           toolbar: (props) => (
-            <QuickSearchToolbar {...props} fetchCallback={fetchShapes} />
+            <QuickSearchToolbar {...props} fetchCallback={fetchFares} />
           ),
         }}
         disableRowSelectionOnClick
@@ -384,6 +310,12 @@ export const ShapesGrid = () => {
             outline: "none",
           },
         }}
+      />
+      <EditModal
+        open={openEdit}
+        close={handleCloseEdit}
+        callback={fetchFares}
+        initialValues={editContext}
       />
     </Box>
   )

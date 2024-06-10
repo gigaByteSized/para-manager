@@ -35,6 +35,7 @@ import {
   CircularProgressProps,
 } from "@mui/material"
 import { StopTimes } from "./StopTimes"
+import polyUtil from "polyline-encoded"
 
 const CircularProgressWithLabel = (
   props: CircularProgressProps & { value: number }
@@ -132,6 +133,12 @@ export const TripWizard = (props) => {
     // console.log(shapePts)
     console.log(nodes)
   }, [nodes])
+
+  useEffect(() => {
+    if(orsRes !== null) {
+      setShapePts(polyUtil.decode(orsRes.routes[0].geometry))
+    }
+  }, [orsRes])
 
   // useEffect(() => {
   //   console.log(legDurations)
@@ -288,7 +295,7 @@ export const TripWizard = (props) => {
             await fetchDirections(nodeShapeConcat, setOrsRes)
 
             // update progress bar
-            setProgressVal(33)
+            // setProgressVal(33)
           } else {
             Swal.fire(
               "Error",

@@ -9,6 +9,7 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined"
 import HailOutlinedIcon from '@mui/icons-material/HailOutlined';
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined"
 import CommuteOutlinedIcon from '@mui/icons-material/CommuteOutlined';
+import TollOutlinedIcon from '@mui/icons-material/TollOutlined';
 import DepartureBoardOutlinedIcon from '@mui/icons-material/DepartureBoardOutlined';
 import PersonIcon from "@mui/icons-material/Person"
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -183,24 +184,17 @@ export const ProSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+              <Item
+                title="Service Calendars"
+                to="/calendar"
+                icon={<CalendarMonthIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
             <Item
-              title="Stop Times"
-              to="/stop-times"
-              icon={<DepartureBoardOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Service Calendars"
-              to="/calendar"
-              icon={<CalendarMonthIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Shapes"
-              to="/shapes"
-              icon={<ShapeLineOutlinedIcon />}
+              title="Fares"
+              to="/fares"
+              icon={<TollOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

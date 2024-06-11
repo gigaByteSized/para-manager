@@ -16,90 +16,14 @@ import {
   getDocs,
   query,
   where,
-  writeBatch,
 } from "firebase/firestore"
 import { db } from "../../firebase-config"
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
-import { AddModal } from "./modals/AddModal"
-import KmlGenerator from "./kmlGen"
-
-import _, { map } from "underscore"
-
-const convertToCsv = (data, headers) => {
-  const csvRows = [headers.join(",")]
-  data.forEach((row) => {
-    const values = headers.map((header) => row[header] || "")
-    csvRows.push(values.join(","))
-  })
-  return csvRows.join("\n")
-}
-
-const downloadFile = (content, fileName) => {
-  const blob = new Blob([content], { type: "text/plain" })
-  const a = document.createElement("a")
-  a.href = URL.createObjectURL(blob)
-  a.download = fileName
-  a.click()
-}
-
-const exportGtfsData = async () => {
-  // Fetch collections from Firestore
-  const shapesSnapshot = await getDocs(collection(db, "shapes"))
-  const stopTimesSnapshot = await getDocs(collection(db, "stop_times"))
-  const frequenciesSnapshot = await getDocs(collection(db, "frequencies"))
-  const tripsSnapshot = await getDocs(collection(db, "trips"))
-
-  // Convert Firestore documents to arrays of data
-  const shapesData = shapesSnapshot.docs.map((doc) => doc.data())
-  const stopTimesData = stopTimesSnapshot.docs.map((doc) => doc.data())
-  const frequenciesData = frequenciesSnapshot.docs.map((doc) => doc.data())
-  const tripsData = tripsSnapshot.docs.map((doc) => doc.data())
-
-  // Define headers for each GTFS file
-  const shapesHeaders = [
-    "shape_id",
-    "shape_pt_lat",
-    "shape_pt_lon",
-    "shape_pt_sequence",
-  ]
-  const stopTimesHeaders = [
-    "trip_id",
-    "arrival_time",
-    "departure_time",
-    "stop_id",
-    "stop_sequence",
-  ]
-  const frequenciesHeaders = [
-    "trip_id",
-    "start_time",
-    "end_time",
-    "headway_secs",
-  ]
-  const tripsHeaders = ["route_id", "service_id", "trip_id", "shape_id"]
-
-  // Convert data to CSV format
-  const shapesCsv = convertToCsv(shapesData, shapesHeaders)
-  const stopTimesCsv = convertToCsv(stopTimesData, stopTimesHeaders)
-  const frequenciesCsv = convertToCsv(frequenciesData, frequenciesHeaders)
-  const tripsCsv = convertToCsv(tripsData, tripsHeaders)
-
-  // Download each CSV file
-  downloadFile(shapesCsv, "shapes.txt")
-  downloadFile(stopTimesCsv, "stop_times.txt")
-  downloadFile(frequenciesCsv, "frequencies.txt")
-  downloadFile(tripsCsv, "trips.txt")
-}
 
 const QuickSearchToolbar = (props) => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
-
-  const latlongArray = [
-    { latitude: 37.422, longitude: -122.084 },
-    { latitude: 34.052, longitude: -118.243 },
-    { latitude: 40.712, longitude: -74.006 },
-  ]
 
   return (
     <Box
@@ -125,7 +49,7 @@ const QuickSearchToolbar = (props) => {
       >
         Add Trip
       </Button>
-      <Button
+      {/* <Button
         variant="contained"
         onClick={exportGtfsData}
         sx={{
@@ -137,7 +61,7 @@ const QuickSearchToolbar = (props) => {
         }}
       >
         Export GTFS
-      </Button>
+      </Button> */}
       {/* <KmlGenerator latlongArray={latlongArray} /> */}
       <GridToolbarQuickFilter />
     </Box>
@@ -260,41 +184,43 @@ export const TripGrid = () => {
       disableColumnMenu: true,
       renderCell: (params) => {
         return (
-          <Grid container spacing={0.3}>
-            <Grid
-              item
-              xs={6}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <EditIcon
-                sx={{
-                  "&:hover": {
-                    color: colors.greenAccent[500],
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() => editRoute(params.id, params.row)}
-              />
-              <EditModal
-                open={openEdit}
-                close={handleCloseEdit}
-                callback={fetchTrips}
-                initialValues={editContext}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+          // <Grid container spacing={0.3}>
+          //   <Grid
+          //     item
+          //     xs={6}
+          //     sx={{
+          //       display: "flex",
+          //       alignItems: "center",
+          //       justifyContent: "center",
+          //     }}
+          //   >
+          //     <EditIcon
+          //       sx={{
+          //         "&:hover": {
+          //           color: colors.greenAccent[500],
+          //           cursor: "pointer",
+          //         },
+          //       }}
+          //       onClick={() => editRoute(params.id, params.row)}
+          //     />
+          //     <EditModal
+          //       open={openEdit}
+          //       close={handleCloseEdit}
+          //       callback={fetchTrips}
+          //       initialValues={editContext}
+          //     />
+          //   </Grid>
+          //   <Grid
+          //     item
+          //     xs={6}
+          //     sx={{
+          //       display: "flex",
+          //       alignItems: "center",
+          //       justifyContent: "center",
+          //     }}
+          //   >
+          //   </Grid>
+          // </Grid>
               <DeleteIcon
                 sx={{
                   "&:hover": {
@@ -306,8 +232,6 @@ export const TripGrid = () => {
                   deleteTrip(params.row.id, params.row.trip_id)
                 }}
               />
-            </Grid>
-          </Grid>
         )
       },
     },

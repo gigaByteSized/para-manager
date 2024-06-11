@@ -141,7 +141,7 @@ export const AddModal = (props) => {
 
   // Todo: SHOULD BE PROVIDED VIA HOOK
   const agencyItems = itemizeAgencies(agencyRows)
-  const localizedRouteTypes = LocalizeRouteTypes([1945, 2000, 2016, 2017])
+  const localizedRouteTypes = LocalizeRouteTypes([1945, 2000, 3, 2016, 2017])
   const itemizedRouteTypes = ItemizeRouteTypes(localizedRouteTypes)
   // Todo: SHOULD BE PROVIDED VIA HOOK
 

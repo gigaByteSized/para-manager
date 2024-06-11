@@ -690,8 +690,8 @@ export const TripWizard = (props) => {
                     </>
                   )}
                 </Form>
-                <pre>{JSON.stringify(values, null, 2)}</pre>
-                <pre>{JSON.stringify(touched, null, 2)}</pre>
+                {/* <pre>{JSON.stringify(values, null, 2)}</pre>
+                <pre>{JSON.stringify(touched, null, 2)}</pre> */}
               </>
             )}
           </Formik>

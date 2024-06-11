@@ -29,42 +29,42 @@ const QuickSearchToolbar = (props) => {
     return routesSnapshot.docs.map((doc) => doc.data())
   }
 
-  const generateRoutesTxt = (routes: any[]): string => {
-    const headers = [
-      "route_id",
-      "agency_id",
-      "route_short_name",
-      "route_long_name",
-      "route_desc",
-      "route_type",
-      "route_url",
-      "route_color",
-      "route_text_color",
-    ]
+  // const generateRoutesTxt = (routes: any[]): string => {
+  //   const headers = [
+  //     "route_id",
+  //     "agency_id",
+  //     "route_short_name",
+  //     "route_long_name",
+  //     "route_desc",
+  //     "route_type",
+  //     "route_url",
+  //     "route_color",
+  //     "route_text_color",
+  //   ]
 
-    const routesData = routes.map((route) => {
-      return [
-        route.route_id || "",
-        route.agency_id || "",
-        route.route_short_name || "",
-        route.route_long_name || "",
-        route.route_desc || "",
-        ParaRouteTypeToGTFS(route.route_type).toString(),
-        route.route_url || "",
-        route.route_color || "",
-        route.route_text_color || "",
-      ].join(",")
-    })
+  //   const routesData = routes.map((route) => {
+  //     return [
+  //       route.route_id || "",
+  //       route.agency_id || "",
+  //       route.route_short_name || "",
+  //       route.route_long_name || "",
+  //       route.route_desc || "",
+  //       ParaRouteTypeToGTFS(route.route_type).toString(),
+  //       route.route_url || "",
+  //       route.route_color || "",
+  //       route.route_text_color || "",
+  //     ].join(",")
+  //   })
 
-    return [headers.join(","), ...routesData].join("\n")
-  }
+  //   return [headers.join(","), ...routesData].join("\n")
+  // }
 
-  const downloadRoutesTxt = async () => {
-    const routes = await fetchRoutes()
-    const routesTxt = generateRoutesTxt(routes)
-    const blob = new Blob([routesTxt], { type: "text/plain;charset=utf-8" })
-    saveAs(blob, "routes.txt")
-  }
+  // const downloadRoutesTxt = async () => {
+  //   const routes = await fetchRoutes()
+  //   const routesTxt = generateRoutesTxt(routes)
+  //   const blob = new Blob([routesTxt], { type: "text/plain;charset=utf-8" })
+  //   saveAs(blob, "routes.txt")
+  // }
 
   return (
     <Box
@@ -95,7 +95,7 @@ const QuickSearchToolbar = (props) => {
         close={handleCloseAdd}
         callback={props.fetchCallback}
       />
-      <Button
+      {/* <Button
         variant="contained"
         onClick={downloadRoutesTxt}
         sx={{
@@ -107,7 +107,7 @@ const QuickSearchToolbar = (props) => {
         }}
       >
         Download Routes
-      </Button>
+      </Button> */}
       <GridToolbarQuickFilter />
     </Box>
   )

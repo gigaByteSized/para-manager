@@ -36,8 +36,8 @@ export const GeneralTripInfo = (props) => {
 
   // const [calendarValue, setCalendarValue] = useState(null)
   const [calendarInputValue, setCalendarInputValue] = useState("")
-  const [startTime, setStartTime] = useState(dayjs(new Date()))
-  const [endTime, setEndTime] = useState(dayjs(new Date()))
+  const [startTime, setStartTime] = useState(dayjs().set('hour', 4).set('minute', 0).set('second', 0))
+  const [endTime, setEndTime] = useState(dayjs().set('hour', 22).set('minute', 0).set('second', 0))
 
   useEffect(() => {
     fetchRoutes()

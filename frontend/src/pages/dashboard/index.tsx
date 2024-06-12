@@ -7,14 +7,6 @@ import {
   Fab,
   Typography,
   useTheme,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Grid,
 } from "@mui/material"
 import { Header } from "../../components/Header"
 import { exportGtfsData } from "../../services/ExportToGTFSFiles"
@@ -22,11 +14,6 @@ import { tokens } from "../../theme"
 import DownloadIcon from "@mui/icons-material/Download"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "../../firebase-config"
-
-interface ErrorData {
-  location: string
-  error: string
-}
 
 export const Dashboard = () => {
   const theme = useTheme()
@@ -143,45 +130,45 @@ export const Dashboard = () => {
               OTP Server Status
             </Typography>
             {healthStatus === "UP" ? (
-              <Grid container>
-                <Grid item xs={1}>
-                  <Typography
-                    variant="h2"
-                    fontWeight={"bold"}
-                  >
-                    Server is 
-                  </Typography>
-                </Grid>
-                <Grid item xs={1}>
-                  <Typography
-                    variant="h2"
-                    fontWeight={"bold"}
-                    color={colors.greenAccent[600]}
-                  >
-                    {healthStatus}
-                  </Typography>
-                </Grid>
-              </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h2" fontWeight={"bold"}>
+                  Server is
+                </Typography>
+                <Typography
+                  variant="h2"
+                  fontWeight={"bold"}
+                  color={colors.greenAccent[600]}
+                  ml={1}
+                >
+                  {healthStatus}
+                </Typography>
+              </Box>
             ) : (
-              <Grid container>
-                <Grid item xs={1}>
-                  <Typography
-                    variant="h2"
-                    fontWeight={"bold"}
-                  >
-                    Server is 
-                  </Typography>
-                </Grid>
-                <Grid item xs={1}>
-                  <Typography
-                    variant="h2"
-                    fontWeight={"bold"}
-                    color={colors.redAccent[600]}
-                  >
-                    {healthStatus}
-                  </Typography>
-                </Grid>
-              </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h2" fontWeight={"bold"}>
+                  Server is
+                </Typography>
+                <Typography
+                  variant="h2"
+                  fontWeight={"bold"}
+                  color={colors.redAccent[600]}
+                  ml={1}
+                >
+                  {healthStatus}
+                </Typography>
+              </Box>
             )}
           </CardContent>
         </Card>

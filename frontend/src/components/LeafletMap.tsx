@@ -192,7 +192,7 @@ export const LeafletMap = (props: any) => {
   })
 
   // const encoded = `${"omdsA}gqaVx@IQkAIm@[_Ca@oCI{@CgATiBbA}Hx@kGTiBK?J?\yCZoB\cBFYHg@RiANkAt@aHf@_Ch@aCZkATk@L[LYLYXo@KIJHf@iAbAuBtAqC|BuEdAwBpBaEIAH@NYbAqBd@cAnAgCl@mA\o@`C{ELUd@_A`@u@Vw@b@gBJa@Le@ZgAKEJDb@{A|@oDh@{Bd@oBFSPw@FSPw@XgADOH_@??^uADMDODMBGFQRiAz@kC\iAf@yA`@iAXs@f@oAL_@bAaC\u@Xs@JWXq@P]f@iA@CABg@hAQ\Yp@KVYr@]t@y@nBx@oB\u@Xs@JWXq@P]f@iA@CZs@BC`@y@b@}@Zq@l@gA`@y@b@q@Va@OENDt@eAp@cA\e@\k@lAqBNSmDyAiAc@cA[CP|Af@p@VhBt@h@\JFNSt@mAh@}@vA_Cz@uAr@gAFMJO\i@h@{@\m@~@uAvAyBj@w@JMd@m@j@u@KGJFV_@zAuBZa@Za@kDmCqEyBqAm@{AWfAp@jAh@vE~BlBtAx@n@vB~A|C~Ch@b@~A~@xAf@z@R`@JP@IIOKMGg@WOIaAYsAq@gA_Ae@g@_@_@yAoAsB}Av@aAjAoAl@o@x@u@|@}@XWlAaAnA{@LIb@UDCTM`HeDJGzFeDPKRMVOj@_@BCCBk@^WNSLQJPKRMVOj@_@BC`CoBPOFEPOZYPM\[LKPMNKLGn@Md@Gb@KFAf@G`@G`AIzAQr@Kj@I~ASx@Md@GRCn@IRERCz@M\EhDa@PCp@KjAQdAMRCTCb@G~@MTC\GDl@Dx@"}`
-  const encoded = `${"ghrlHir~s@?BIC{ELgDo@aBa@}@I?sB?k@BwD?_JgAJgHt@I@]iHC?B?KuB]oFASg@wImAt@y@f@d@bJ"}`
+  // const encoded = `${"ghrlHir~s@?BIC{ELgDo@aBa@}@I?sB?k@BwD?_JgAJgHt@I@]iHC?B?KuB]oFASg@wImAt@y@f@d@bJ"}`
   // console.log(polyUtil.decode(encoded), "decoded")
 
   return (
@@ -317,9 +317,9 @@ export const LeafletMap = (props: any) => {
           : null}
         {props.showPolyline ? (
           <Polyline
-            pathOptions={{ color: "blue" }}
-            positions={polyUtil.decode(encoded)}
-            // positions={polyUtil.decode(props.encodedPolyline as string)}
+            pathOptions={{ color: "blue", }} //skyblue
+            // positions={polyUtil.decode(encoded)}
+            positions={polyUtil.decode(props.encodedPolyline as string)}
           />
         ) : null}
       </MapContainer>

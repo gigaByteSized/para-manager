@@ -7,7 +7,6 @@ import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 
 import { tokens } from "../../theme"
-import { EditModal } from "./modals/EditModal"
 import {
   collection,
   deleteDoc,
@@ -20,6 +19,7 @@ import {
 import { db } from "../../firebase-config"
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
+import { TripDetailsModal } from "./TripDetailsModal"
 
 const QuickSearchToolbar = (props) => {
   const theme = useTheme()
@@ -73,10 +73,14 @@ export const TripGrid = () => {
   const colors = tokens(theme.palette.mode)
 
   const [rows, setRows] = useState([])
-  const [openEdit, setOpenEdit] = useState(false)
-  const [editContext, setEditContext] = useState("")
-  const handleOpenEdit = () => setOpenEdit(true)
-  const handleCloseEdit = () => setOpenEdit(false)
+  const [openDetails, setOpenDetails] = useState(false)
+  const handleOpenDetails = () => setOpenDetails(true)
+  const handleCloseDetails = () => setOpenDetails(false)
+  const [detailsContext, setDetailsContext] = useState("")
+  // const [openEdit, setOpenEdit] = useState(false)
+  // const [editContext, setEditContext] = useState("")
+  // const handleOpenEdit = () => setOpenEdit(true)
+  // const handleCloseEdit = () => setOpenEdit(false)
 
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
@@ -91,6 +95,7 @@ export const TripGrid = () => {
   const frequencyColRef = collection(db, "frequencies")
   const stopTimesColRef = collection(db, "stop_times")
   const shapesColRef = collection(db, "shapes")
+  
 
   useEffect(() => {
     fetchTrips()
@@ -132,17 +137,17 @@ export const TripGrid = () => {
     },
     {
       field: "trip_id",
-      headerName: "Route short name",
+      headerName: "Trip ID",
       flex: 2,
     },
     {
-      field: "frequency_ref",
-      headerName: "Trip Frequencies",
+      field: "trip_details",
+      headerName: "Trip Details",
       sortable: false,
       align: "center",
       headerAlign: "center",
       // width: 160,
-      flex: 1.25,
+      flex: 0.5,
       disableColumnMenu: true,
       renderCell: (params) => {
         return (
@@ -155,7 +160,7 @@ export const TripGrid = () => {
           >
             <>
               <Button
-                onClick={() => showRouteDesc(params.row)}
+                onClick={() => showTripDetails(params.row.id)}
                 sx={{
                   backgroundColor:
                     params.row.route_desc != ""
@@ -180,7 +185,7 @@ export const TripGrid = () => {
       align: "center",
       headerAlign: "center",
       sortable: false,
-      flex: 1,
+      flex: 0.5,
       disableColumnMenu: true,
       renderCell: (params) => {
         return (
@@ -251,18 +256,23 @@ export const TripGrid = () => {
     })
   }
 
-  const editRoute = (id: any, initialValues: any) => {
-    rows.forEach((e) => {
-      if (e.agency_id === id) {
-        initialValues.id = e.id
-        {
-          return
-        }
-      }
-    })
-    setEditContext(initialValues)
-    handleOpenEdit()
+  const showTripDetails = (id: any,) => {
+    setDetailsContext(id)
+    handleOpenDetails()
   }
+
+  // const editRoute = (id: any, initialValues: any) => {
+  //   rows.forEach((e) => {
+  //     if (e.agency_id === id) {
+  //       initialValues.id = e.id
+  //       {
+  //         return
+  //       }
+  //     }
+  //   })
+  //   setEditContext(initialValues)
+  //   handleOpenEdit()
+  // }
 
   const deleteTrip = (id: any, trip_id) => {
     Swal.fire({
@@ -462,6 +472,11 @@ export const TripGrid = () => {
         // disableColumnFilter
         // disableColumnSelector
         // disableDensitySelector
+      />
+      <TripDetailsModal
+        open={openDetails}
+        close={handleCloseDetails}
+        tripId={detailsContext}
       />
     </Box>
   )

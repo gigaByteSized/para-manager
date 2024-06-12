@@ -14,13 +14,32 @@ import { StopsViewer } from "./pages/stops-manager/StopsViewer"
 import { CalendarManager } from "./pages/calendar-manager"
 import { TripsManager } from "./pages/trips-manager"
 import { FaresManager } from "./pages/fares-manager"
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google"
 // import { Dashboard } from './pages/Dashboard'
 
 const App = () => {
   const [theme, colorMode] = useMode()
   const [isSidebar, setIsSidebar] = useState(true)
 
+  const [success, setSuccess] = useState(null)
+
+  // const responseMessage = (response) => {
+  //   console.log(response)
+  // }
+  // const errorMessage = (error) => {
+  //   console.log(error)
+  // }
+
   return (
+    <>
+      {/* <GoogleLogin
+        onSuccess={(credentialResponse) => {
+          console.log(credentialResponse)
+        }}
+        onError={() => {
+          console.log("Login Failed")
+        }}
+      /> */}
       <ColorModeContext.Provider
         value={colorMode as { toggleColorMode: () => void }}
       >
@@ -55,6 +74,7 @@ const App = () => {
           </div>
         </ThemeProvider>
       </ColorModeContext.Provider>
+    </>
   )
 }
 

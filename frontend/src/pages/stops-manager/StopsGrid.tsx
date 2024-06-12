@@ -32,53 +32,53 @@ const QuickSearchToolbar = (props) => {
     window.open("/stops/viewer", "_blank", "popup")
   }
 
-  const fetchStops = async (): Promise<any> => {
-    const stopsCollection = collection(db, "stops")
-    const stopsSnapshot = await getDocs(stopsCollection)
-    const stopsList = stopsSnapshot.docs.map((doc) => doc.data())
-    return stopsList
-  }
+  // const fetchStops = async (): Promise<any> => {
+  //   const stopsCollection = collection(db, "stops")
+  //   const stopsSnapshot = await getDocs(stopsCollection)
+  //   const stopsList = stopsSnapshot.docs.map((doc) => doc.data())
+  //   return stopsList
+  // }
 
-  const generateStopsTxt = (stops: any): string => {
-    const headers = [
-      "stop_id",
-      "stop_name",
-      "stop_desc",
-      "stop_lat",
-      "stop_lon",
-      "zone_id",
-      "stop_url",
-      "location_type",
-      "parent_station",
-      "stop_timezone",
-      "wheelchair_boarding",
-    ]
+  // const generateStopsTxt = (stops: any): string => {
+  //   const headers = [
+  //     "stop_id",
+  //     "stop_name",
+  //     "stop_desc",
+  //     "stop_lat",
+  //     "stop_lon",
+  //     "zone_id",
+  //     "stop_url",
+  //     "location_type",
+  //     "parent_station",
+  //     "stop_timezone",
+  //     "wheelchair_boarding",
+  //   ]
 
-    const stopsData = stops.map((stop) => {
-      return [
-        stop.stop_id || "",
-        stop.stop_name || "",
-        stop.stop_desc || "",
-        stop.stop_lat !== undefined ? stop.stop_lat.toString() : "",
-        stop.stop_lon !== undefined ? stop.stop_lon.toString() : "",
-        "", // zone_id
-        "", // stop_url
-        "", // location_type
-        "", // parent_station
-        "", // stop_timezone
-        "", // wheelchair_boarding
-      ].join(",")
-    })
+  //   const stopsData = stops.map((stop) => {
+  //     return [
+  //       stop.stop_id || "",
+  //       stop.stop_name || "",
+  //       stop.stop_desc || "",
+  //       stop.stop_lat !== undefined ? stop.stop_lat.toString() : "",
+  //       stop.stop_lon !== undefined ? stop.stop_lon.toString() : "",
+  //       "", // zone_id
+  //       "", // stop_url
+  //       "", // location_type
+  //       "", // parent_station
+  //       "", // stop_timezone
+  //       "", // wheelchair_boarding
+  //     ].join(",")
+  //   })
 
-    return [headers.join(","), ...stopsData].join("\n")
-  }
+  //   return [headers.join(","), ...stopsData].join("\n")
+  // }
 
-  const downloadStopsTxt = async () => {
-    const stops = await fetchStops()
-    const stopsTxt = generateStopsTxt(stops)
-    const blob = new Blob([stopsTxt], { type: "text/plain;charset=utf-8" })
-    saveAs(blob, "stops.txt")
-  }
+  // const downloadStopsTxt = async () => {
+  //   const stops = await fetchStops()
+  //   const stopsTxt = generateStopsTxt(stops)
+  //   const blob = new Blob([stopsTxt], { type: "text/plain;charset=utf-8" })
+  //   saveAs(blob, "stops.txt")
+  // }
 
   return (
     <Box
@@ -126,7 +126,7 @@ const QuickSearchToolbar = (props) => {
         >
           View All Stops
         </Button>
-        <Button
+        {/* <Button
           variant="contained"
           endIcon={<PreviewIcon />}
           onClick={downloadStopsTxt}
@@ -140,7 +140,7 @@ const QuickSearchToolbar = (props) => {
           }}
         >
           Download Stops
-        </Button>
+        </Button> */}
       </Box>
       <GridToolbarQuickFilter />
     </Box>

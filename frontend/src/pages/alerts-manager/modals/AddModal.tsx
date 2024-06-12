@@ -13,11 +13,11 @@ import CustomTextField from "../../../components/forms/CustomTextField"
 import { Formik, Form } from "formik"
 import * as schemas from "../../../schemas"
 import { tokens } from "../../../theme"
-import { doc, updateDoc } from "firebase/firestore"
+import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore"
 import { db } from "../../../firebase-config"
 import Swal from "sweetalert2"
 import { useEffect, useState } from "react"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import utc from "dayjs/plugin/utc"
@@ -26,13 +26,21 @@ import timezone from "dayjs/plugin/timezone"
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export const EditModal = (props) => {
+export const AddModal = (props) => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
+  const calendarColRef = collection(db, "calendar")
 
-  const initialValues = props.initialValues || {
-    id: "",
-    service_id: "",
+
+  const [open, setOpen] = useState(false)
+  const handleClose = () => {
+    setOpen(false)
+  }
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const [day, setDay] = useState({
     monday: 0,
     tuesday: 0,
     wednesday: 0,
@@ -40,25 +48,10 @@ export const EditModal = (props) => {
     friday: 0,
     saturday: 0,
     sunday: 0,
-    start_date: new Date().toISOString().split("T")[0],
-    end_date: new Date().toISOString().split("T")[0],
-  }
+  })
 
-  // useEffect(() => {
-  //   setDay({
-  //     monday: initialValues.monday,
-  //     tuesday: initialValues.tuesday,
-  //     wednesday: initialValues.wednesday,
-  //     thursday: initialValues.thursday,
-  //     friday: initialValues.friday,
-  //     saturday: initialValues.saturday,
-  //     sunday: initialValues.sunday,
-  //   })
-
-  // }, [dayUpdated])
-
-  const [startDate, setStartDate] = useState(dayjs(initialValues.start_date))
-  const [endDate, setEndDate] = useState(dayjs(initialValues.end_date))
+  const [startDate, setStartDate] = useState(dayjs(new Date()))
+  const [endDate, setEndDate] = useState(dayjs(new Date()))
 
   const btnUnselectedConfigs = {
     sx: {
@@ -111,60 +104,24 @@ export const EditModal = (props) => {
   }
 
   const [btnSx, setBtnSx] = useState({
-    monday: initialValues.monday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    tuesday: initialValues.tuesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    wednesday: initialValues.wednesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    thursday: initialValues.thursday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    friday: initialValues.friday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    saturday: initialValues.saturday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    sunday: initialValues.sunday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
+    monday: btnUnselectedConfigs.sx,
+    tuesday: btnUnselectedConfigs.sx,
+    wednesday: btnUnselectedConfigs.sx,
+    thursday: btnUnselectedConfigs.sx,
+    friday: btnUnselectedConfigs.sx,
+    saturday: btnUnselectedConfigs.sx,
+    sunday: btnUnselectedConfigs.sx,
   })
 
-  useEffect(() => {
-    setBtnSx({
-      monday: initialValues.monday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      tuesday: initialValues.tuesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      wednesday: initialValues.wednesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      thursday: initialValues.thursday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      friday: initialValues.friday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      saturday: initialValues.saturday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      sunday: initialValues.sunday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    })
-
-    setStartDate(dayjs(initialValues.start_date))
-    setEndDate(dayjs(initialValues.end_date))
-
-  }, [initialValues.monday])
-
-  // const weekBtnOnclick = (dayArg, setFieldValue) => {
-  //   if (day[dayArg] === 1) {
-  //     setBtnSx((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: btnUnselectedConfigs.sx,
-  //     }))
-  //     setDay((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: 0,
-  //     }))
-  //     setFieldValue(dayArg, 0)
-  //   } else {
-  //     setBtnSx((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: btnSelectedConfigs.sx,
-  //     }))
-  //     setDay((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: 1,
-  //     }))
-  //     setFieldValue(dayArg, 1)
-  //   }
-  // }
-
   const weekBtnOnclick = (dayArg, setFieldValue) => {
-    if (initialValues[dayArg] === 1) {
+    if (day[dayArg] === 1) {
       setBtnSx((prevState) => ({
         ...prevState,
         [dayArg]: btnUnselectedConfigs.sx,
+      }))
+      setDay((prevState) => ({
+        ...prevState,
+        [dayArg]: 0,
       }))
       setFieldValue(dayArg, 0)
     } else {
@@ -172,22 +129,40 @@ export const EditModal = (props) => {
         ...prevState,
         [dayArg]: btnSelectedConfigs.sx,
       }))
+      setDay((prevState) => ({
+        ...prevState,
+        [dayArg]: 1,
+      }))
       setFieldValue(dayArg, 1)
     }
   }
 
+  const initialValues = {
+    service_id: "",
+    monday: 0,
+    tuesday: 0,
+    wednesday: 0,
+    thursday: 0,
+    friday: 0,
+    saturday: 0,
+    sunday: 0,
+    start_date: new Date().toISOString().split("T")[0],
+    end_date: new Date().toISOString().split("T")[0],
+  }
 
   const onSubmit = async (values: any, formikBag: { setSubmitting: any }) => {
     const { setSubmitting } = formikBag
 
     console.log(values)
+    // TODO : Send data to server
 
     setTimeout(() => {
       setSubmitting(false)
     }, 1000)
 
+
     try {
-      await updateDoc(doc(db, "calendar", values.id), {
+      await addDoc(calendarColRef, {
         service_id: values.service_id,
         monday: values.monday,
         tuesday: values.tuesday,
@@ -199,12 +174,13 @@ export const EditModal = (props) => {
         start_date: values.start_date,
         end_date: values.end_date,
       })
+
       props.callback()
       props.close()
 
       Swal.fire({
-        title: "Updated!",
-        text: `Service ID ${values.service_id} has been updated.`,
+        title: "Added!",
+        text: `Service ID ${values.service_id} has been added.`,
         icon: "success",
         confirmButtonColor: colors.greenAccent[600],
         cancelButtonColor: colors.redAccent[500],
@@ -213,7 +189,7 @@ export const EditModal = (props) => {
         timer: 1500,
       })
     } catch (e) {
-      console.error("Error updating document: ", e)
+      console.error("Error adding document: ", e)
       props.close()
     }
   }
@@ -242,6 +218,7 @@ export const EditModal = (props) => {
               left: "50%",
               transform: "translate(-50%, -50%)",
               width: "900px",
+              //   bgcolor: "background.paper",
               bgcolor: theme.palette.background.default,
               boxShadow: 24,
               p: 4,
@@ -338,6 +315,7 @@ export const EditModal = (props) => {
                             Sunday
                           </Button>
                         </ButtonGroup>
+                        {/* </Box> */}
                       </Grid>
                       <Grid item xs={12}>
                         <Box
@@ -348,6 +326,7 @@ export const EditModal = (props) => {
                             alignItems: "center",
                             mx: 15,
                             mb: 3,
+                            // mt: 1,
                           }}
                         >
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -366,7 +345,7 @@ export const EditModal = (props) => {
                               sx={dateTimePickerSx}
                             />
 
-                            <Typography variant="h5">{"to"}</Typography>
+                            <Typography variant="h5"> {"to"}</Typography>
 
                             <DatePicker
                               label="End Date"
@@ -385,6 +364,18 @@ export const EditModal = (props) => {
                           </LocalizationProvider>
                         </Box>
                       </Grid>
+                      {/* <Grid item xs={12}>
+                        <CustomTextField
+                          fullWidth
+                          id="agency_fare_url"
+                          name="agency_fare_url"
+                          label="Agency Fare URL"
+                        />
+                      </Grid> */}
+
+                      {/* <Grid item xs={12}>
+  
+              </Grid> */}
                     </Grid>
                     <Box
                       mt={2}
@@ -394,6 +385,9 @@ export const EditModal = (props) => {
                       }}
                     >
                       <Button
+                        // fullWidth
+                        // variant="contained"
+                        // color={theme.palette.primary.main}
                         onClick={props.close}
                         sx={{
                           mr: 2,
@@ -403,10 +397,13 @@ export const EditModal = (props) => {
                             backgroundColor: colors.redAccent[600],
                           },
                         }}
+                        //                     confirmButtonColor: colors.greenAccent[600],
+                        // cancelButtonColor: colors.redAccent[500],
                       >
                         Cancel
                       </Button>
                       <Button
+                        // fullWidth
                         variant="contained"
                         color="primary"
                         type="submit"
@@ -419,7 +416,7 @@ export const EditModal = (props) => {
                           },
                         }}
                       >
-                        Save Changes
+                        Add Calendar
                       </Button>
                     </Box>
                   </Form>

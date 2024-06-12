@@ -17,12 +17,12 @@ export const StopsViewer = (props) => {
     fetchMarkersFromRows()
   }, [])
   
-  useEffect(() => {
-    setTimeout(() => {
-    fetchStops()
-    fetchMarkersFromRows()
-    }, 10000)
-  }, [rows])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //   fetchStops()
+  //   fetchMarkersFromRows()
+  //   }, 10000)
+  // }, [rows])
 
   const fetchStops = async () => {
     const data = await getDocs(stopsColRef)
@@ -40,7 +40,10 @@ export const StopsViewer = (props) => {
       }
     })
     setMarkers(markers)
+    console.log(markers)
   }
+
+
 
   // useMemo(() => {
   //   fetchMarkersFromRows()
@@ -65,14 +68,10 @@ export const StopsViewer = (props) => {
         zIndex: 1000,
       }}
     >
-      <KmlGenerator latlongArray={markers}/>
       <LeafletMap
         id="map"
-        // callback={setFieldValue}
-        // showDraggableMarker
-        // showMarkers
-        showPolyline
-        // markers={markers}
+        showMarkers
+        markers={markers}
         iconSize={[20, 20]}
         zoom={18}
         height={"100%"}

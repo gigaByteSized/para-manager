@@ -1,7 +1,6 @@
 import { Box, Button, Grid, useTheme } from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
-import EditCalendarIcon from "@mui/icons-material/EditCalendar"
 
 import {
   DataGrid,
@@ -39,7 +38,7 @@ const QuickSearchToolbar = (props) => {
       <Button
         variant="contained"
         onClick={handleOpenAdd}
-        endIcon={<EditCalendarIcon />}
+        endIcon={<EditIcon />}
         sx={{
           backgroundColor: colors.greenAccent[600],
           color: colors.grey[100],
@@ -61,7 +60,7 @@ const QuickSearchToolbar = (props) => {
   )
 }
 
-export const CalendarGrid = () => {
+export const AlertsGrid = () => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
   const [rows, setRows] = useState([])
@@ -75,14 +74,14 @@ export const CalendarGrid = () => {
     page: 0,
   })
 
-  const calendarColRef = collection(db, "calendar")
+  const alertsColRef = collection(db, "_meta-community-alerts")
 
   useEffect(() => {
     fetchAgencies()
   }, [])
 
   const fetchAgencies = async () => {
-    const data = await getDocs(calendarColRef)
+    const data = await getDocs(alertsColRef)
     setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
   }
 
@@ -290,7 +289,7 @@ export const CalendarGrid = () => {
   }
 
   const deleteApi = async (id: string) => {
-    const docRef = doc(db, "calendar", id)
+    const docRef = doc(db, "alerts", id)
     const docSnap = await getDoc(docRef)
     if (!docSnap.exists()) {
       Swal.fire({

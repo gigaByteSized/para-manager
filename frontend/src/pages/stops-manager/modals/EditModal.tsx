@@ -22,7 +22,6 @@ export const EditModal = (props) => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
 
-
   const initialValues = props.initialValues || {
     id: "",
     stop_name: "",

@@ -65,6 +65,12 @@ export const ReviewTrip = (props) => {
     setSegments(orsRes.routes[0].segments)
     setEncodedPolyline(orsRes.routes[0].geometry)
     // props.setShapePts(polyUtil.decode(orsRes.routes[0].geometry))
+
+    console.log(orsRes)
+    console.log(routes)
+    console.log(segments)
+    console.log(encodedPolyline)
+
   }, [orsRes, routes, segments, encodedPolyline])
 
   return (
@@ -111,7 +117,7 @@ export const ReviewTrip = (props) => {
             // position={props.coords}
             // markers={selectedMarkers}
             // showMarkers
-            showPolyline={encodedPolyline ? true : false}
+            showPolyline={true}
             encodedPolyline={encodedPolyline ? encodedPolyline : ""}
             // bounds={props.bounds}
             // zoom={12}

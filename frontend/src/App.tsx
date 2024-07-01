@@ -15,6 +15,8 @@ import { CalendarManager } from "./pages/calendar-manager"
 import { TripsManager } from "./pages/trips-manager"
 import { FaresManager } from "./pages/fares-manager"
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google"
+import { AlertsManager } from "./pages/alerts-manager"
+import { RequestsManager } from "./pages/requests-viewer"
 // import { Dashboard } from './pages/Dashboard'
 
 const App = () => {
@@ -60,6 +62,8 @@ const App = () => {
                 <Route path="/calendar/*" element={<CalendarManager />} />
                 <Route path="/trips/*" element={<TripsManager />} />
                 <Route path="/fares/*" element={<FaresManager />} />
+                <Route path="/alerts/*" element={<AlertsManager />} />
+                <Route path="/requests/*" element={<RequestsManager />} />
                 {/* <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/form" element={<Form />} />

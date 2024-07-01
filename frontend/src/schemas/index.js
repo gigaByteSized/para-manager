@@ -331,6 +331,29 @@ export const fareSchema = yup.lazy((values) => {
   return yup.mixed().notRequired()
 })
 
+export const alertSchema = yup.lazy((values) => {
+  const { alertName, alertNotes, stop_lat, stop_lon, alertTTL } = values
+  if (!alertName || !alertNotes || !stop_lat || !stop_lon || !alertTTL) {
+    return yup.object().shape({
+      alertName: yup.string().required("Alert name is required"),
+      alertNotes: yup.string().required("Alert notes is required"),
+      // alert_lat: yup
+      //   .string()
+      //   .required(
+      //     "Alert latitude is required, drag the marker on the map to set the latitude"
+      //   ),
+      // alert_lon: yup
+      //   .string()
+      //   .required(
+      //     "Alert longitude is required, drag the marker on the map to set the longitude"
+      //   ),
+      // alertTTL: yup.string().required("Alert expiry date is required"),
+    })
+  }
+
+  return yup.mixed().notRequired()
+})
+
 // export const routeSchema = yup.object().shape({
 //     // routeLongName: yup.string().ensure().required("Long name is required"),
 //   routeLongName: yup.string().ensure().when("routeShortName", {

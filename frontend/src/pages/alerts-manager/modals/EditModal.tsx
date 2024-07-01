@@ -7,21 +7,28 @@ import {
   Grid,
   Button,
   useTheme,
-  ButtonGroup,
 } from "@mui/material"
 import CustomTextField from "../../../components/forms/CustomTextField"
 import { Formik, Form } from "formik"
 import * as schemas from "../../../schemas"
 import { tokens } from "../../../theme"
-import { doc, updateDoc } from "firebase/firestore"
+import {
+  GeoPoint,
+  Timestamp,
+  doc,
+  updateDoc,
+} from "firebase/firestore"
 import { db } from "../../../firebase-config"
 import Swal from "sweetalert2"
 import { useEffect, useState } from "react"
+import { LeafletMap } from "../../../components/LeafletMap"
+import useSessionStorage from "../../../hooks/useSessionStorage"
 import dayjs from "dayjs"
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
+import { latLng } from "leaflet"
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -30,58 +37,55 @@ export const EditModal = (props) => {
   const theme = useTheme()
   const colors = tokens(theme.palette.mode)
 
+  console.log(props.initialValues)
+
   const initialValues = props.initialValues || {
     id: "",
-    service_id: "",
-    monday: 0,
-    tuesday: 0,
-    wednesday: 0,
-    thursday: 0,
-    friday: 0,
-    saturday: 0,
-    sunday: 0,
-    start_date: new Date().toISOString().split("T")[0],
-    end_date: new Date().toISOString().split("T")[0],
+    alertName: "",
+    alertNotes: "",
+    coordinates: new GeoPoint(0, 0),
+    expiryDate: new Timestamp(0, 0),
   }
 
-  // useEffect(() => {
-  //   setDay({
-  //     monday: initialValues.monday,
-  //     tuesday: initialValues.tuesday,
-  //     wednesday: initialValues.wednesday,
-  //     thursday: initialValues.thursday,
-  //     friday: initialValues.friday,
-  //     saturday: initialValues.saturday,
-  //     sunday: initialValues.sunday,
-  //   })
+  const [expiryDate, setExpiryDate] = useState(dayjs.unix(initialValues.expiryDate.seconds))
+  
+  const onSubmit = async (values: any, formikBag: { setSubmitting: any }) => {
+    console.log("values", values)
+    const { setSubmitting } = formikBag
 
-  // }, [dayUpdated])
+    console.log(values)
 
-  const [startDate, setStartDate] = useState(dayjs(initialValues.start_date))
-  const [endDate, setEndDate] = useState(dayjs(initialValues.end_date))
+    setTimeout(() => {
+      setSubmitting(false)
+    }, 1000)
 
-  const btnUnselectedConfigs = {
-    sx: {
-      height: 50,
-      flexGrow: 1,
-      backgroundColor: colors.blueAccent[800],
-      color: colors.grey[400],
-      "&:hover": {
-        color: colors.grey[300],
-        backgroundColor: colors.blueAccent[700],
-      },
-    },
-  }
+    try {
+      const ttl = dayjs(expiryDate)
 
-  const btnSelectedConfigs = {
-    sx: {
-      ...btnUnselectedConfigs.sx,
-      backgroundColor: colors.blueAccent[600],
-      color: colors.grey[100],
-      "&:hover": {
-        backgroundColor: colors.blueAccent[700],
-      },
-    },
+      await updateDoc(doc(db, "_meta-community-alerts", values.id), {
+        alertName: values.alertName,
+        alertNotes: values.alertNotes,
+        coordinates: new GeoPoint(values.stop_lat, values.stop_lon),
+        expiryDate: new Timestamp(ttl.unix(), 0),
+      })
+
+      props.callback()
+      props.close()
+
+      Swal.fire({
+        title: "Updated!",
+        text: `"${values.alertName}" has been updated.`,
+        icon: "success",
+        confirmButtonColor: colors.greenAccent[600],
+        cancelButtonColor: colors.redAccent[500],
+        background: theme.palette.background.default,
+        color: colors.grey[100],
+        timer: 1500,
+      })
+    } catch (e) {
+      console.error("Error updating document: ", e)
+      props.close()
+    }
   }
 
   const dateTimePickerSx = {
@@ -110,114 +114,6 @@ export const EditModal = (props) => {
     },
   }
 
-  const [btnSx, setBtnSx] = useState({
-    monday: initialValues.monday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    tuesday: initialValues.tuesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    wednesday: initialValues.wednesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    thursday: initialValues.thursday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    friday: initialValues.friday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    saturday: initialValues.saturday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    sunday: initialValues.sunday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-  })
-
-  useEffect(() => {
-    setBtnSx({
-      monday: initialValues.monday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      tuesday: initialValues.tuesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      wednesday: initialValues.wednesday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      thursday: initialValues.thursday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      friday: initialValues.friday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      saturday: initialValues.saturday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-      sunday: initialValues.sunday ? btnSelectedConfigs.sx : btnUnselectedConfigs.sx,
-    })
-
-    setStartDate(dayjs(initialValues.start_date))
-    setEndDate(dayjs(initialValues.end_date))
-
-  }, [initialValues.monday])
-
-  // const weekBtnOnclick = (dayArg, setFieldValue) => {
-  //   if (day[dayArg] === 1) {
-  //     setBtnSx((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: btnUnselectedConfigs.sx,
-  //     }))
-  //     setDay((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: 0,
-  //     }))
-  //     setFieldValue(dayArg, 0)
-  //   } else {
-  //     setBtnSx((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: btnSelectedConfigs.sx,
-  //     }))
-  //     setDay((prevState) => ({
-  //       ...prevState,
-  //       [dayArg]: 1,
-  //     }))
-  //     setFieldValue(dayArg, 1)
-  //   }
-  // }
-
-  const weekBtnOnclick = (dayArg, setFieldValue) => {
-    if (initialValues[dayArg] === 1) {
-      setBtnSx((prevState) => ({
-        ...prevState,
-        [dayArg]: btnUnselectedConfigs.sx,
-      }))
-      setFieldValue(dayArg, 0)
-    } else {
-      setBtnSx((prevState) => ({
-        ...prevState,
-        [dayArg]: btnSelectedConfigs.sx,
-      }))
-      setFieldValue(dayArg, 1)
-    }
-  }
-
-
-  const onSubmit = async (values: any, formikBag: { setSubmitting: any }) => {
-    const { setSubmitting } = formikBag
-
-    console.log(values)
-
-    setTimeout(() => {
-      setSubmitting(false)
-    }, 1000)
-
-    try {
-      await updateDoc(doc(db, "calendar", values.id), {
-        service_id: values.service_id,
-        monday: values.monday,
-        tuesday: values.tuesday,
-        wednesday: values.wednesday,
-        thursday: values.thursday,
-        friday: values.friday,
-        saturday: values.saturday,
-        sunday: values.sunday,
-        start_date: values.start_date,
-        end_date: values.end_date,
-      })
-      props.callback()
-      props.close()
-
-      Swal.fire({
-        title: "Updated!",
-        text: `Service ID ${values.service_id} has been updated.`,
-        icon: "success",
-        confirmButtonColor: colors.greenAccent[600],
-        cancelButtonColor: colors.redAccent[500],
-        background: theme.palette.background.default,
-        color: colors.grey[100],
-        timer: 1500,
-      })
-    } catch (e) {
-      console.error("Error updating document: ", e)
-      props.close()
-    }
-  }
-
   return (
     <>
       <Modal
@@ -241,7 +137,7 @@ export const EditModal = (props) => {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "900px",
+              width: "60vw",
               bgcolor: theme.palette.background.default,
               boxShadow: 24,
               p: 4,
@@ -249,141 +145,81 @@ export const EditModal = (props) => {
             }}
           >
             <Typography variant="h4" mb={3}>
-              Service Calendar Information
+              Stop Information
             </Typography>
             <Formik
               initialValues={initialValues}
               onSubmit={onSubmit}
-              validationSchema={schemas.calendarSchema}
+              validationSchema={schemas.alertSchema}
             >
               {({ isSubmitting, setFieldValue }) => (
                 <>
                   <Form>
-                    <Grid container>
-                      <Grid container spacing={2}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
                         <Grid item xs={12}>
                           <CustomTextField
-                            id="service_id"
-                            name="service_id"
-                            label="Service ID"
+                            fullWidth
+                            id="alertName"
+                            name="alertName"
+                            label="Alert name"
                           />
                         </Grid>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <ButtonGroup
-                          variant="contained"
-                          sx={{
-                            display: "flex",
-                            alignContent: "center",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            mb: 3,
-                            mt: 1,
-                          }}
-                        >
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("monday", setFieldValue)
-                            }}
-                            sx={btnSx.monday}
-                          >
-                            Monday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("tuesday", setFieldValue)
-                            }}
-                            sx={btnSx.tuesday}
-                          >
-                            Tuesday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("wednesday", setFieldValue)
-                            }}
-                            sx={btnSx.wednesday}
-                          >
-                            Wednesday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("thursday", setFieldValue)
-                            }}
-                            sx={btnSx.thursday}
-                          >
-                            Thursday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("friday", setFieldValue)
-                            }}
-                            sx={btnSx.friday}
-                          >
-                            Friday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("saturday", setFieldValue)
-                            }}
-                            sx={btnSx.saturday}
-                          >
-                            Saturday
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              weekBtnOnclick("sunday", setFieldValue)
-                            }}
-                            sx={btnSx.sunday}
-                          >
-                            Sunday
-                          </Button>
-                        </ButtonGroup>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignContent: "center",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mx: 15,
-                            mb: 3,
-                          }}
-                        >
+                        <Grid item xs={12}>
+                          <CustomTextField
+                            id="stop_lat"
+                            name="stop_lat"
+                            label="Latitude"
+                            disabled
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <CustomTextField
+                            id="stop_lon"
+                            name="stop_lon"
+                            label="Longitude"
+                            disabled
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <CustomTextField
+                            fullWidth
+                            multiline
+                            rows={5}
+                            id="alertNotes"
+                            name="alertNotes"
+                            label="AlertNotes"
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
-                              label="Start Date"
-                              value={startDate}
+                              label="ExpiryDate"
+                              value={expiryDate}
+                              slotProps={{ textField: { fullWidth: true } }}
                               onChange={(newValue) => {
-                                setStartDate(newValue)
+                                setExpiryDate(newValue)
                                 setFieldValue(
-                                  "start_date",
+                                  "alertTTL",
                                   newValue
                                     .tz("Asia/Manila")
                                     .format("YYYY-MM-DD")
                                 )
                               }}
                               sx={dateTimePickerSx}
-                            />
-
-                            <Typography variant="h5">{"to"}</Typography>
-
-                            <DatePicker
-                              label="End Date"
-                              value={endDate}
-                              sx={dateTimePickerSx}
-                              onChange={(newValue) => {
-                                setEndDate(newValue)
-                                setFieldValue(
-                                  "end_date",
-                                  newValue
-                                    .tz("Asia/Manila")
-                                    .format("YYYY-MM-DD")
-                                )
-                              }}
                             />
                           </LocalizationProvider>
-                        </Box>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <LeafletMap
+                          id="map"
+                          callback={setFieldValue}
+                          draggableMarkerPosition={{lat: initialValues.coordinates.latitude, lng: initialValues.coordinates.longitude}}
+                          showDraggableMarker
+                          editMode
+                          height="43vh"
+                        />
                       </Grid>
                     </Grid>
                     <Box
@@ -419,7 +255,7 @@ export const EditModal = (props) => {
                           },
                         }}
                       >
-                        Save Changes
+                        Update Alert
                       </Button>
                     </Box>
                   </Form>

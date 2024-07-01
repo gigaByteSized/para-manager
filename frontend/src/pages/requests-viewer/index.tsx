@@ -1,9 +1,9 @@
 import { Box } from "@mui/material"
 import { Header } from "../../components/Header"
 import { Route, Routes } from "react-router-dom"
-import { AlertsGrid } from "./AlertsGrid"
+import { RequestsGrid } from "./RequestsGrid"
 
-export const AlertsManager = () => {
+export const RequestsManager = () => {
   return (
     <Box m={"20px"}>
       <Box
@@ -12,12 +12,12 @@ export const AlertsManager = () => {
         alignItems={"center"}
       >
         <Header
-          title="Community Alerts"
-          subtitle="Welcome to community alerts"
+          title="Route Requests"
+          subtitle="Welcome to route requests"
         />
       </Box>
       <Routes>
-        <Route path="/" element={<AlertsGrid />} />
+        <Route path="/" element={<RequestsGrid />} />
       </Routes>
     </Box>
   )

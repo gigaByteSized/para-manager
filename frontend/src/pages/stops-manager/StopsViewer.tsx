@@ -8,14 +8,19 @@ import KmlGenerator from "../trips-manager/kmlGen"
 
 
 export const StopsViewer = (props) => {
-  const [rows, setRows] = useSessionStorage("viewRows", [])
+  // const [rows, setRows] = useSessionStorage("viewRows", [])
+
+  const [rows, setRows] = useState([])
   const [markers, setMarkers] = useState([])
   const stopsColRef = collection(db, "stops")
 
   useEffect(() => {
     fetchStops()
-    fetchMarkersFromRows()
   }, [])
+
+  useEffect(() => {
+    fetchMarkersFromRows()
+  }, [rows])
   
   // useEffect(() => {
   //   setTimeout(() => {

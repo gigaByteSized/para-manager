@@ -34,7 +34,7 @@ export const TopBar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton>
+        {/* <IconButton>
           <NotificationsOutlinedIcon />
         </IconButton>
         <IconButton>
@@ -42,7 +42,7 @@ export const TopBar = () => {
         </IconButton>
         <IconButton>
           <PersonOutlinedIcon />
-        </IconButton>
+        </IconButton> */}
       </Box>
     </Box>
   )

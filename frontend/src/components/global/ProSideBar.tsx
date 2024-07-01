@@ -6,18 +6,18 @@ import { Box, Icon, IconButton, Typography, useTheme } from "@mui/material"
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined"
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined"
-import HailOutlinedIcon from '@mui/icons-material/HailOutlined';
+import HailOutlinedIcon from "@mui/icons-material/HailOutlined"
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined"
-import CommuteOutlinedIcon from '@mui/icons-material/CommuteOutlined';
-import TollOutlinedIcon from '@mui/icons-material/TollOutlined';
-import DepartureBoardOutlinedIcon from '@mui/icons-material/DepartureBoardOutlined';
+import CommuteOutlinedIcon from "@mui/icons-material/CommuteOutlined"
+import TollOutlinedIcon from "@mui/icons-material/TollOutlined"
+import DepartureBoardOutlinedIcon from "@mui/icons-material/DepartureBoardOutlined"
 import PersonIcon from "@mui/icons-material/Person"
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
 import { ListItemText } from "@mui/material"
 import { tokens } from "../../theme"
 import ShapeLineOutlinedIcon from "@mui/icons-material/ShapeLineOutlined"
-
-// TODO : ICONS TO FOLLOW
+import BusAlertIcon from "@mui/icons-material/BusAlert"
+import FeedbackIcon from "@mui/icons-material/Feedback"
 
 const Item = ({ title, to, icon, selected, setSelected }: any) => {
   const theme = useTheme()
@@ -76,7 +76,7 @@ export const ProSideBar = () => {
       <Sidebar
         collapsed={isCollapsed}
         backgroundColor={colors.primary[400]}
-        rootStyles={{ border: "none", height: "100vh", }}
+        rootStyles={{ border: "none", height: "100vh" }}
       >
         <Menu>
           {/* LOGO AND MENU ICON */}
@@ -184,17 +184,31 @@ export const ProSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-              <Item
-                title="Service Calendars"
-                to="/calendar"
-                icon={<CalendarMonthIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
+            <Item
+              title="Service Calendars"
+              to="/calendar"
+              icon={<CalendarMonthIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             <Item
               title="Fares"
               to="/fares"
               icon={<TollOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Community Alerts"
+              to="/alerts"
+              icon={<BusAlertIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Route Requests"
+              to="/requests"
+              icon={<FeedbackIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -204,14 +218,7 @@ export const ProSideBar = () => {
               icon={<DepartureBoardOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <Item
-              title="Stop Times"
-              to="/stop-times"
-              icon={<DepartureBoardOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+              />
             <Item
               title="Stop Times"
               to="/stop-times"

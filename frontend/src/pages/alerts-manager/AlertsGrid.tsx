@@ -1,4 +1,4 @@
-import { Box, Button, Grid, useTheme } from "@mui/material"
+import { Box, Button, Grid, Tooltip, useTheme } from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 
@@ -17,7 +17,8 @@ import { tokens } from "../../theme"
 import { useEffect, useState } from "react"
 import { AddModal } from "./modals/AddModal"
 import { EditModal } from "./modals/EditModal"
-import { Check } from "@mui/icons-material"
+import { ViewInMapModal } from "./modals/ViewInMapModal"
+import { latLng } from "leaflet"
 
 const QuickSearchToolbar = (props) => {
   const theme = useTheme()
@@ -47,7 +48,7 @@ const QuickSearchToolbar = (props) => {
           },
         }}
       >
-        Add Service Schedule
+        Add Alert
       </Button>
       <AddModal
         open={openAdd}
@@ -67,7 +68,15 @@ export const AlertsGrid = () => {
   const [openEdit, setOpenEdit] = useState(false)
   const [editContext, setEditContext] = useState("")
   const handleOpenEdit = () => setOpenEdit(true)
-  const handleCloseEdit = () => setOpenEdit(false)
+  const handleCloseEdit = () => {
+    setOpenEdit(false)
+    setShow(false)
+  }
+  const [openMap, setOpenMap] = useState(false)
+  const handleOpenMap = () => setOpenMap(true)
+  const handleCloseMap = () => setOpenMap(false)
+  const [mapContext, setMapContext] = useState<any>("")
+  const [show, setShow] = useState(false)
 
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
@@ -77,10 +86,10 @@ export const AlertsGrid = () => {
   const alertsColRef = collection(db, "_meta-community-alerts")
 
   useEffect(() => {
-    fetchAgencies()
+    fetchAlerts()
   }, [])
 
-  const fetchAgencies = async () => {
+  const fetchAlerts = async () => {
     const data = await getDocs(alertsColRef)
     setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
   }
@@ -88,113 +97,76 @@ export const AlertsGrid = () => {
   const apiRef = useGridApiRef()
 
   const columns: GridColDef[] = [
-    { field: "service_id", headerName: "Service ID", flex: 3 },
     {
-      field: "monday",
-      headerName: "Monday",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        return <>{params.row.monday === 1 ? <Check /> : null}</>
-      },
+      field: "alertName",
+      headerName: "Alert Name",
+      // align: "center",
+      // headerAlign: "center",
+      flex: 3,
     },
     {
-      field: "tuesday",
-      headerName: "Tuesday",
+      field: "expiryDate",
+      headerName: "Expiry Date",
       align: "center",
       headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
+      flex: 1,
       renderCell: (params) => {
-        return <>{params.row.tuesday === 1 ? <Check /> : null}</>
+        return (
+          <>
+            {/* format timestamp to readable date */}
+            {new Date(
+              params.row.expiryDate?.seconds * 1000
+            ).toLocaleDateString()}
+          </>
+        )
       },
     },
-    {
-      field: "wednesday",
-      headerName: "Wednesday",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        return <>{params.row.wednesday === 1 ? <Check /> : null}</>
-      },
-      // width: 90,
-    },
-    {
-      field: "thursday",
-      headerName: "Thursday",
-      align: "center",
-      headerAlign: "center",
-      // width: 70,
 
-      flex: 2,
+    {
+      field: "alertNotes",
+      headerName: "Alert Notes",
+      align: "center",
+      headerAlign: "center",
       sortable: false,
+      flex: 1.5,
+
       disableColumnMenu: true,
       renderCell: (params) => {
-        return <>{params.row.thursday === 1 ? <Check /> : null}</>
+        return (
+          <Button
+            onClick={() => showAlertNotes(params.row)}
+            sx={{
+              backgroundColor: colors.greenAccent[600],
+              color: colors.grey[100],
+              "&:hover": {
+                backgroundColor: colors.greenAccent[700],
+              },
+            }}
+          >
+            View
+          </Button>
+        )
       },
     },
     {
-      field: "friday",
-      headerName: "Friday",
+      field: "coordinates",
+      headerName: "Location",
       align: "center",
       headerAlign: "center",
-      // width: 110,
-      flex: 2,
       sortable: false,
+      flex: 1.5,
+
       disableColumnMenu: true,
       renderCell: (params) => {
-        return <>{params.row.friday === 1 ? <Check /> : null}</>
+        return (
+          <>
+            {/* up to 4 decimal places */}
+            {/* Lat: {params.row.coordinates?.latitude} Lng: {params.row.coordinates?.longitude} */}
+            Lat: {params.row.coordinates?.latitude.toFixed(4)} Lng:{" "}
+            {params.row.coordinates?.longitude.toFixed(4)}
+          </>
+        )
       },
-    },
-    {
-      field: "saturday",
-      headerName: "Saturday",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        return <>{params.row.saturday === 1 ? <Check /> : null}</>
-      },
-    },
-    {
-      field: "sunday",
-      headerName: "Sunday",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        return <>{params.row.sunday === 1 ? <Check /> : null}</>
-      },
-      // width: 130,
-    },
-    {
-      field: "start_date",
-      headerName: "Start Date",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
-    },
-    {
-      field: "end_date",
-      headerName: "End Date",
-      align: "center",
-      headerAlign: "center",
-      flex: 2,
-      sortable: false,
-      disableColumnMenu: true,
     },
     {
       field: "action",
@@ -224,7 +196,7 @@ export const AlertsGrid = () => {
                     cursor: "pointer",
                   },
                 }}
-                onClick={() => editService(params.id, params.row)}
+                onClick={() => editAlert(params.id, params.row)}
               />
             </Grid>
             <Grid
@@ -244,7 +216,7 @@ export const AlertsGrid = () => {
                   },
                 }}
                 onClick={() => {
-                  deleteService(params.row.id)
+                  deleteAlert(params.row.id)
                 }}
               />
             </Grid>
@@ -254,23 +226,40 @@ export const AlertsGrid = () => {
     },
   ]
 
-  const editService = (id: any, initialValues: any) => {
+  const showAlertNotes = (params) => {
+    Swal.fire({
+      title: `${params.alertName}`,
+      text:
+        params.alertNotes === "" || params.alertNotes === undefined
+          ? "No description"
+          : params.alertNotes,
+      icon: "info",
+      confirmButtonColor: colors.greenAccent[600],
+      background: theme.palette.background.default,
+      color: colors.grey[100],
+    })
+  }
+
+  // const showMap = (id: any) => {
+  //   setMapContext(id)
+  //   handleOpenMap()
+  // }
+
+  const editAlert = (id: any, initialValues: any) => {
     rows.forEach((e) => {
       if (e.service_id === id) {
         initialValues.id = e.id
-        console.log(e.id)
-        console.log(initialValues)
-
         {
           return
         }
       }
     })
     setEditContext(initialValues)
+    setShow(true)
     handleOpenEdit()
   }
 
-  const deleteService = (id: any) => {
+  const deleteAlert = (id: any) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -289,12 +278,12 @@ export const AlertsGrid = () => {
   }
 
   const deleteApi = async (id: string) => {
-    const docRef = doc(db, "alerts", id)
+    const docRef = doc(db, "_meta-community-alerts", id)
     const docSnap = await getDoc(docRef)
     if (!docSnap.exists()) {
       Swal.fire({
         title: "Error",
-        text: "Service not found",
+        text: "Alert not found",
         icon: "error",
         background: theme.palette.background.default,
         color: colors.grey[100],
@@ -305,13 +294,13 @@ export const AlertsGrid = () => {
     await deleteDoc(docRef)
     Swal.fire({
       title: "Deleted!",
-      text: `Service ID ${docSnap.data().service_id}, has been deleted.`,
+      text: `${docSnap.data().alertName} has been deleted.`,
       icon: "success",
       background: theme.palette.background.default,
       color: colors.grey[100],
       timer: 1500,
     })
-    fetchAgencies()
+    fetchAlerts()
   }
 
   return (
@@ -347,11 +336,11 @@ export const AlertsGrid = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.service_id}
+        getRowId={(row) => row.id}
         apiRef={apiRef}
         slots={{
           toolbar: (props) => (
-            <QuickSearchToolbar {...props} fetchCallback={fetchAgencies} />
+            <QuickSearchToolbar {...props} fetchCallback={fetchAlerts} />
           ),
         }}
         disableRowSelectionOnClick
@@ -367,12 +356,20 @@ export const AlertsGrid = () => {
           },
         }}
       />
-      <EditModal
-        open={openEdit}
-        close={handleCloseEdit}
-        callback={fetchAgencies}
-        initialValues={editContext}
-      />
+      {show ? (
+        <EditModal
+          open={openEdit}
+          close={handleCloseEdit}
+          callback={fetchAlerts}
+          initialValues={editContext}
+        />
+      ) : null}
+
+      {/* <ViewInMapModal
+        open={openMap}
+        close={handleCloseMap}
+        alertID={mapContext}
+      /> */}
     </Box>
   )
 }
